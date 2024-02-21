@@ -58,10 +58,16 @@ int main()
 
     cout << '\n';
 
-    for (int k = 0; k < avg_score.size(); ++k)
-        cout << team_numbers[k] << ": " << avg_score[k] << "   Notes Score: " << notes_avg_score[k] << '\n';
+    for (int k = 0; k < avg_score.size(); ++k){
+    cout << "Team Number: " << team_numbers[k] << "   Average Score: " << avg_score[k] << "   Average notes Score: " << notes_avg_score[k] << '\n';
 
-    //TOOD: We should save these stats as a CSV to upload to GSheets. 
+    }
+    cout << endl << endl;
+    cout << "Team Number,Average Score,Notes Average Score" << endl;
+
+    for(int y = 0; y < avg_score.size(); ++y){
+    cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << endl; 
+    }
 
     return 0;
 }
