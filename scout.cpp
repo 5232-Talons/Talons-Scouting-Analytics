@@ -6,6 +6,7 @@ Implementation of a basic routine to caluclate teams overall avg score & avg not
 #include <sstream>
 #include <string>
 #include <vector>
+#include <math.h>
 
 using namespace std;
 
@@ -29,8 +30,9 @@ int main()
 
     vector<double> avg_score(team_numbers.size(), 0);       // Initialize avg score vector, filled with zeroes
     vector<double> notes_avg_score(team_numbers.size(), 0); // Initialize notes avg score vector, filled with zeroes
+    vector<double> match_score(matrix.size(), 0);
 
-    size_t team_number{}, match_score{}, count{};
+    size_t team_number{}, count{};
 
     // TOOD: These scores should be moved to a struct or class, this would also support qualitative data as well then.
     for (size_t i = 0; i < team_numbers.size(); ++i)
@@ -40,8 +42,8 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                match_score = matrix[j][1] + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5;
-                avg_score[i] += match_score;
+                match_score[j] = matrix[j][1] + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5;
+                avg_score[i] += match_score[j];
                 notes_avg_score[i] += matrix[j][1] + matrix[j][3] + 2 * matrix[j][4];
                 count++;
             }
@@ -54,19 +56,39 @@ int main()
         }
         // Reset count for the next team
         count = 0;
+        
     }
 
-    cout << '\n';
-
-    for (int k = 0; k < avg_score.size(); ++k){
-    cout << "Team Number: " << team_numbers[k] << "   Average Score: " << avg_score[k] << "   Average notes Score: " << notes_avg_score[k] << '\n';
-
+    
+vector<double> stdev(team_numbers.size(), 0); // Initialize notes avg score vector, filled with zeroes
+    for (size_t i = 0; i < team_numbers.size(); ++i)
+    {
+        team_number = team_numbers[i];
+        for (size_t j = 0; j < matrix.size(); ++j)
+        {
+            if (matrix[j][0] == team_number)
+            {
+                stdev[i] += pow(avg_score[i] - match_score[j], 2);
+                count++;
+            }
+        }
+        stdev[i] = sqrt(stdev[i] / count);
+        // Calculate average score after all matches of the team are accumulated
+        if (count != 0)
+        {
+            avg_score[i] = avg_score[i] / count;
+            notes_avg_score[i] = notes_avg_score[i] / count;
+        }
+        // Reset count for the next team
+        count = 0;
+        
     }
+ 
     cout << endl << endl;
-    cout << "Team Number,Average Score,Notes Average Score" << endl;
+    cout << "Team Number,Average Score,Notes Average Score, stdev" << endl;
 
     for(int y = 0; y < avg_score.size(); ++y){
-    cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << endl; 
+    cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << endl; 
     }
 
     return 0;
