@@ -3,6 +3,7 @@ Implementation of a basic routine to caluclate teams overall avg score & avg not
 
 
 ***************************************************************************************/
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,8 +15,7 @@ using namespace std;
 
 void csv_to_matrix(const string &, vector<vector<int>> &);
 
-int main()
-{
+int main(){
     string filename = "data.csv"; // Provide the path to your CSV file
 
     vector<vector<int>> matrix{};
@@ -33,15 +33,17 @@ int main()
     vector<double> avg_score(team_numbers.size(), 0);       // Initialize avg score vector, filled with zeroes
     vector<double> notes_avg_score(team_numbers.size(), 0); // Initialize notes avg score vector, filled with zeroes
     vector<double> match_score(matrix.size(), 0);
-
     size_t team_number{}, count{};
+    vector<double> stdev(team_numbers.size(), 0);           // Initialize notes avg score vector, filled with zeroes
+    vector<double> driver_score(team_numbers.size(), 0);    // Initialize driver score vector, filled with zeroes
+    vector<double> climbing_score(team_numbers.size(), 0);
+    vector<double> human_score(team_numbers.size(), 0);
+
 
     // TOOD: These scores should be moved to a struct or class, this would also support qualitative data as well then.
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
+    for (size_t i = 0; i < team_numbers.size(); ++i){
         team_number = team_numbers[i];
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
+        for (size_t j = 0; j < matrix.size(); ++j){
             if (matrix[j][0] == team_number)
             {
                 match_score[j] = matrix[j][1] + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5;
@@ -51,50 +53,95 @@ int main()
             }
         }
         // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
+        if (count != 0){
             avg_score[i] = avg_score[i] / count;
             notes_avg_score[i] = notes_avg_score[i] / count;
         }
         // Reset count for the next team
         count = 0;
-        
     }
 
-
-vector<double> stdev(team_numbers.size(), 0); // Initialize notes avg score vector, filled with zeroes
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
+    for (size_t i = 0; i < team_numbers.size(); ++i){
         team_number = team_numbers[i];
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
-            if (matrix[j][0] == team_number)
-            {
+        for (size_t j = 0; j < matrix.size(); ++j){
+            if (matrix[j][0] == team_number){
                 stdev[i] += pow(avg_score[i] - match_score[j], 2);
                 count++;
             }
         }
-        stdev[i] = sqrt(stdev[i] / count);
         // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
-            avg_score[i] = avg_score[i] / count;
-            notes_avg_score[i] = notes_avg_score[i] / count;
+        if (count != 0){
+            stdev[i] = sqrt(stdev[i] / count);
+
         }
         // Reset count for the next team
-        count = 0;
+        count = 0;     
+    }
+
+    for (size_t i = 0; i < team_numbers.size(); ++i){
+        for (size_t j = 0; j < matrix.size(); ++j){
+            if (matrix[j][0] == team_number){
+                driver_score[i]  += matrix[j][7];
+                count++;
+            }
+        }
+        // Calculate averagescore after all matches of the team are accumulated
+        if (count != 0){
+            driver_score[i] = driver_score[i] / count;
+        }
         
+        // Reset count for the next team
+        count = 0;
     }
- 
+
+    for (size_t i = 0; i < team_numbers.size(); ++i){
+        for (size_t j = 0; j < matrix.size(); ++j){
+            if (matrix[j][0] == team_number){
+                climbing_score[i]  += matrix[j][5];
+                count++;
+            }
+        }
+
+        // Calculate averagescore after all matches of the team are accumulated
+        if (count != 0){
+            climbing_score[i] = driver_score[i] / count;
+        }
+        
+        // Reset count for the next team
+        count = 0;
+    }
+
+    for (size_t i = 0; i < team_numbers.size(); ++i){
+        for (size_t j = 0; j < matrix.size(); ++j){
+            if (matrix[j][0] == team_number){
+                human_score[i]  += matrix[j][8];
+                count++;
+            }
+        }
+
+        // Calculate averagescore after all matches of the team are accumulated
+        if (count != 0){
+            human_score[i] = human_score[i] / count;
+        }
+        
+        // Reset count for the next team
+        count = 0;
+    }    
+
+
     cout << endl << endl;
-    cout << "Team Number,Average Score,Notes Average Score, stdev" << endl;
+    cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, climbing_score, human_score" << endl;
 
-    for(size_t y = 0; y < avg_score.size(); ++y){
-    cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << endl; 
+    for(int y = 0; y < avg_score.size(); ++y){
+    cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << "," << climbing_score[y] << ',' << human_score[y] << endl; 
     }
-
     return 0;
 }
+
+
+
+
+
 
 // Converts 5232 Google Sheet to a Matrix that supports quick data maniuplation.
 void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
@@ -108,15 +155,18 @@ void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
     }
 
     string line{};
-    while (getline(file, line))
-    {
+    while (getline(file, line)){
         vector<int> row{};
         stringstream ss(line);
         string cell{};
 
-        while (getline(ss, cell, ','))
-        {
+        while (getline(ss, cell, ',')){
+            if(cell.empty()){
+                row.push_back(0);
+            }
+            else{
             row.push_back(stoi(cell));
+            }
         }
 
         score_matrix.push_back(row);
