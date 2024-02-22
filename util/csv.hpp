@@ -47,6 +47,7 @@ class CSVWriter
         char delimeter_{','};
         bool wasSuccess{false};
         std::vector<std::vector<std::vector<int>>> write_content_{};
+        
 
 
     public:
@@ -59,8 +60,9 @@ class CSVWriter
         CSVWriter(const std::string&, const char &); //Take a ref to a filename and a delimeter.
 
     
-    /*Core*/
+    /*Core*/ //TODO: Template this!!!!
         CSVWriter &WriteCSV(const std::vector<std::vector<int>>&); //Write to file given a vector of rows.
+        CSVWriter &WriteCSV(const std::vector<std::vector<double>>&); //Do the same as above but as doubles
         CSVWriter &WriteCSV(); // Write to the given file.
 
     /*Helper(s)*/

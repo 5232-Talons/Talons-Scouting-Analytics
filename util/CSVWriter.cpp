@@ -23,9 +23,13 @@ CSVWriter &CSVWriter::WriteCSV()
     {
         for (size_t j = 0; j < this->write_content_[i].size(); j++)
         {
-            for (const auto &cell : write_content_[i][j])
-                out_file << std::to_string(cell) << this->delimeter_;
-            out_file << '\n';
+            for (size_t h = 0; h < this->write_content_[i][j].size(); j++)
+            {
+                if (j == this->write_content_[i][j].size() - 1)
+                    out_file << std::to_string(this->write_content_[i][j][h]);
+                else
+                    out_file << std::to_string(this->write_content_[i][j][h]) << this->delimeter_;
+            }
         }
     }
 
@@ -45,14 +49,45 @@ CSVWriter &CSVWriter::WriteCSV(const std::vector<std::vector<int>> &write_conten
 
     for (size_t i = 0; i < write_content.size(); i++) // Iterate through vector and write to file.
     {
-        for (const auto &cell : write_content[i])
-            out_file << std::to_string(cell) << this->delimeter_;
+        for (size_t j = 0; j < write_content[i].size(); j++)
+        {
+            if (j == write_content[i].size() - 1)
+                out_file << std::to_string(write_content[i][j]);
+            else
+                out_file << std::to_string(write_content[i][j]) << this->delimeter_;
+        }
+    }
+    out_file.close();
+    this->wasSuccess = true; // Set our state to success.
+    return *this;
+}
+
+CSVWriter &CSVWriter::WriteCSV(const std::vector<std::vector<double>> &write_content)
+{
+
+    std::ofstream out_file(this->filename_, std::ios::app); // Open file in append mode so we don't overwrite previous values.
+    if (!out_file.is_open())
+    {
+        std::cerr << "Error: Unable to open the file: " << this->filename_ << '\n';
+        std::exit(1);
+    }
+
+    for (size_t i = 0; i < write_content.size(); i++) // Iterate through vector and write to file.
+    {
+        for (size_t j = 0; j < write_content[i].size(); j++)
+        {
+            if (j == write_content[i].size() - 1)
+                out_file << std::to_string(write_content[i][j]);
+            else
+                out_file << std::to_string(write_content[i][j]) << this->delimeter_;
+        }
         out_file << '\n';
     }
     out_file.close();
     this->wasSuccess = true; // Set our state to success.
     return *this;
 }
+
 #pragma endregion
 
 #pragma region Helpers
