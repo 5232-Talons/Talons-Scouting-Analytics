@@ -23,13 +23,10 @@ CSVReader& CSVReader::ReadCSV(){
         std::string key = std::to_string(row[0]);
         if(!this->team_map_.contains(key)) {
             team_map_[key] = std::vector<std::vector<int>>{};
+        }
 
         team_map_.find(key)->second.push_back(row);
-        
-            
-        }
-        
-
+    
 
     }
 
