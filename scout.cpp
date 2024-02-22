@@ -1,6 +1,8 @@
-/*
+/**************************************************************************************
 Implementation of a basic routine to caluclate teams overall avg score & avg note score.
-*/
+
+
+***************************************************************************************/
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -59,7 +61,7 @@ int main()
         
     }
 
-    
+
 vector<double> stdev(team_numbers.size(), 0); // Initialize notes avg score vector, filled with zeroes
     for (size_t i = 0; i < team_numbers.size(); ++i)
     {
@@ -87,7 +89,7 @@ vector<double> stdev(team_numbers.size(), 0); // Initialize notes avg score vect
     cout << endl << endl;
     cout << "Team Number,Average Score,Notes Average Score, stdev" << endl;
 
-    for(size_t y = 0; y < avg_score.size(); ++y){
+    for(int y = 0; y < avg_score.size(); ++y){
     cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << endl; 
     }
 
