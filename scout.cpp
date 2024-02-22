@@ -210,8 +210,8 @@ int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot
 
             }
 
-            bluetot = blue1 + blue2 + blue3;
-            redtot = red1 + red2 + red3;
+            bluetot = blue1_score + blue2_score + blue3_score;
+            redtot = red1_score + red2_score + red3_score;
         cout << "Blue alliance          Red Alliance" << endl;
         cout << blue1 << ": " << fixed << setprecision(2) << blue1_score << "           " << red1 << ": " << fixed << setprecision(2) << red1_score << endl;
         cout << blue2 << ": " << fixed << setprecision(2) << blue2_score << "           " << red2 << ": " << fixed << setprecision(2) << red2_score << endl;
