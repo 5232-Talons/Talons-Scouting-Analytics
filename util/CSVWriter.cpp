@@ -18,13 +18,13 @@ CSVWriter &CSVWriter::WriteCSV()
         std::exit(1);
     }
 
-    //Iter through vector<vector<vector>>> to handle map of key, vector<vector<T>>
+    // Iter through vector<vector<vector>>> to handle map of key, vector<vector<T>>
     for (size_t i = 0; i < this->write_content_.size(); i++)
     {
-        for (size_t j = 0; j < this->write_content_[i].size(); j++) 
+        for (size_t j = 0; j < this->write_content_[i].size(); j++)
         {
             for (const auto &cell : write_content_[i][j])
-                out_file << std::to_string(cell) << this->delimeter_; 
+                out_file << std::to_string(cell) << this->delimeter_;
             out_file << '\n';
         }
     }
@@ -43,14 +43,14 @@ CSVWriter &CSVWriter::WriteCSV(const std::vector<std::vector<int>> &write_conten
         std::exit(1);
     }
 
-    for (size_t i = 0; i < write_content.size(); i++) //Iterate through vector and write to file.
+    for (size_t i = 0; i < write_content.size(); i++) // Iterate through vector and write to file.
     {
         for (const auto &cell : write_content[i])
             out_file << std::to_string(cell) << this->delimeter_;
         out_file << '\n';
     }
     out_file.close();
-    this->wasSuccess = true; //Set our state to success.
+    this->wasSuccess = true; // Set our state to success.
     return *this;
 }
 #pragma endregion

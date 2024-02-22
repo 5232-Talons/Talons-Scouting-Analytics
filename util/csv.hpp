@@ -31,6 +31,7 @@ public:
     CSVReader(const std::string &, const char &);
     CSVReader &ReadCSV();
     CSVReader &ParseCSV();
+    CSVReader &ParseCSV(bool);
 
     std::map<std::string, std::vector<std::vector<int>>> &GetResults();
     CSVReader &SetFileName(std::string&);
