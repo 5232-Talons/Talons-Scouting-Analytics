@@ -17,7 +17,7 @@ using namespace std;
 void csv_to_matrix(const string &, vector<vector<int>> &);
 
 int main(){
-    string filename = "data.csv"; // Provide the path to your CSV file
+    string filename = "robot_scores.csv"; // Provide the path to your CSV file
 
     vector<vector<int>> matrix{};
     csv_to_matrix(filename, matrix); // This works because refrences are OP, it should be done this way to avoid one less copy/move.
@@ -132,7 +132,7 @@ int main(){
         count = 0;
     }    
 
-int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
+    int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
 
 
     cout << "****************************************" << endl;
@@ -189,25 +189,19 @@ int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot
             cin >> red3;
 
             for(size_t y = 0; y < avg_score.size(); ++y){
-                if(team_numbers[y] == blue1){
+                if(team_numbers[y] == blue1)
                     blue1_score = avg_score[y];
-                }
-                else if (team_numbers[y] == blue2){
+                
+                else if (team_numbers[y] == blue2)
                     blue2_score = avg_score[y];
-                } 
-                else if (team_numbers[y] == blue3){
+                else if (team_numbers[y] == blue3)
                     blue3_score = avg_score[y];
-                } 
-                else if (team_numbers[y] == red1){
+                else if (team_numbers[y] == red1)
                     red1_score = avg_score[y];
-                } 
-                else if (team_numbers[y] == red2){
+                else if (team_numbers[y] == red2)
                     red2_score = avg_score[y];
-                } 
-                else if (team_numbers[y] == red3){
+                else if (team_numbers[y] == red3)
                     red3_score = avg_score[y];
-                } 
-
             }
 
             bluetot = blue1_score + blue2_score + blue3_score;
@@ -219,12 +213,8 @@ int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot
         cout << endl;
         cout << "Red: " << redtot << endl;
         cout << "Blue: " << bluetot << endl;
-        if( redtot > bluetot){
-            cout << "Red Alliance is the projected winner." << endl;
-        }
-        else{
-            cout << "Blue Alliance is the projected winner." << endl;
-        }
+
+        cout << (redtot > bluetot ? "Red Alliance is the projected winner." : "Blue Alliance is the projected winner.") << endl;
 
         cout << endl << "End of Match Simluation" << endl << endl;
 
