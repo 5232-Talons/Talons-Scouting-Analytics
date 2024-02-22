@@ -214,8 +214,11 @@ int main(){
         cout << "Red: " << redtot << endl;
         cout << "Blue: " << bluetot << endl;
 
+        if(redtot != bluetot)
         cout << (redtot > bluetot ? "Red Alliance is the projected winner." : "Blue Alliance is the projected winner.") << endl;
 
+        else
+        cout << "It's a tie!";
         cout << endl << "End of Match Simluation" << endl << endl;
 
             break;
