@@ -259,8 +259,11 @@ int main()
             cout << endl;
             cout << "Red: " << redtot << endl;
             cout << "Blue: " << bluetot << endl;
-
-            cout << (redtot > bluetot ? "Red Alliance is the projected winner." : "Blue Alliance is the projected winner.") << endl;
+            
+            if(redtot != bluetot)
+              cout << (redtot > bluetot ? "Red Alliance is the projected winner." : "Blue Alliance is the projected winner.") << endl;
+            else
+              cout << "It's a tie!";
 
             cout << endl
                  << "End of Match Simluation" << endl
@@ -291,7 +294,7 @@ int main()
             }
             break;
         }
-
+            
         case (5):
         {
             vector<vector<double>> rows{};
