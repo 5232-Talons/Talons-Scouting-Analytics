@@ -26,6 +26,9 @@ int main()
 {
     char ch_has_header{'n'};
     string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
+    cout << "****************************************" << endl;
+    cout << "  Welcome to 5232's Scouting Analytics" << endl;
+    cout << "****************************************" << endl;
 
     cout << "Enter filename to load: ";
     cin >> filename;
@@ -173,15 +176,14 @@ int main()
 
     int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
 
-    cout << "****************************************" << endl;
-    cout << "  Welcome to 5232's Scouting Analytics" << endl;
-    cout << "****************************************" << endl;
 
-    cout << endl;
+
+    cout << "****************************************" << endl;
 
     int exit_prog{6};
     while (choice != exit_prog)
     {
+
         cout << "               Main Menu    " << endl;
         cout << "****************************************" << endl;
         cout << "1. View a team's data" << endl;
@@ -195,7 +197,7 @@ int main()
         switch (choice)
         {
         case 1:
-            cout << "Please Enter the team's data you want.";
+            cout << "Please Enter the team's data you want: ";
             cin >> team;
             cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, climbing_score, human_score, match_count" << endl;
             for (size_t y = 0; y < avg_score.size(); ++y)
