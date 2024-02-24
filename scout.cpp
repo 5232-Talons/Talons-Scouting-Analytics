@@ -12,6 +12,11 @@ Implementation of a basic routine to caluclate teams overall avg score & avg not
 #include <math.h>
 #include <iomanip>
 #include "./util/csv.hpp"
+#include <algorithm>
+#include "../../../msys64/ucrt64/include/c++/13.2.0/bits/algorithmfwd.h"
+#include <cstdio>
+
+
 
 using namespace std;
 
@@ -55,7 +60,7 @@ int main()
         4229, 4230, 4623, 4703, 4786, 5232, 5271, 5275, 5339, 5720,
         5913, 6044, 6045, 6047, 6132, 6147, 6419, 6574, 6758, 7273,
         7530, 7619, 8122, 8700, 8803};
-
+    
     vector<double> avg_score(team_numbers.size(), 0);       // Initialize avg score vector, filled with zeroes
     vector<double> notes_avg_score(team_numbers.size(), 0); // Initialize notes avg score vector, filled with zeroes
     vector<double> match_score(matrix.size(), 0);
@@ -180,18 +185,20 @@ int main()
 
     cout << "****************************************" << endl;
 
-    int exit_prog{6};
+    int exit_prog{8};
     while (choice != exit_prog)
     {
 
         cout << "               Main Menu    " << endl;
         cout << "****************************************" << endl;
         cout << "1. View a team's data" << endl;
-        cout << "2. Print a csv of all team's data" << endl;
+        cout << "2. Print a CSV of all team's data" << endl;
         cout << "3. Simulate a match" << endl;
         cout << "4. Load New CSV Dataset" << endl;
         cout << "5. Save Data to CSV" << endl;
-        cout << "6. Exit program" << endl;
+        cout << "6. Print list of teams" << endl;
+        cout << "7. Print list of teams based off of best score avg" << endl;
+        cout << "8. Exit program" << endl;
         cin >> choice;
 
         switch (choice)
@@ -199,14 +206,20 @@ int main()
         case 1:
             cout << "Please Enter the team's data you want: ";
             cin >> team;
-            cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, climbing_score, human_score, match_count" << endl;
+            cout << endl;
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
                 if (team_numbers[y] == team)
                 {
-                    cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << "," << climbing_score[y] << ',' << human_score[y] << "," << match_count[y] << endl;
-                    cout << endl
-                         << endl;
+                    cout << "Team Number:         " << team_numbers[y] << endl;
+                    cout << "Average Score:       " << avg_score[y] << endl;
+                    cout << "Stdev of Avg Score:  " << stdev[y] << endl;
+                    cout << "Notes Avg Score:     " << notes_avg_score[y] << endl;
+                    cout << "Driver Score:        " << driver_score[y] << endl;
+                    cout << "Climbing Score(0-1): " << climbing_score[y] << endl;
+                    cout << "Human Score (0-5):   " << human_score[y] <<endl;
+                    cout << "Match Count:         " << match_count[y] << endl;
+                
                 }
             }
 
@@ -324,17 +337,45 @@ int main()
             break;
         }
 
+        case (6): 
+        {
+            for (size_t y = 0; y < avg_score.size(); ++y)
+            {
+                cout << team_numbers[y] << endl;
+            }
+            break;
+        }
+
+        case (7):
+        {
+            vector<tuple<int, double, double>> teams_info;
+
+            for (size_t i = 0; i < team_numbers.size(); ++i)
+                teams_info.emplace_back(team_numbers[i], avg_score[i], stdev[i]);
+
+            // Sort the vector of tuples based on the average score
+            sort(teams_info.begin(), teams_info.end(), [](const auto& a, const auto& b) { return get<1>(a) > get<1>(b); });
+
+            // Print the sorted teams along with their average scores and standard deviations
+            cout << "Teams sorted by average score:" << endl;
+            for (const auto& [team, avg, dev] : teams_info)
+                cout << "Team " << team << ": Avg Score: " << fixed << setprecision(2) << avg << ", Stdev: " << dev << endl;
+
+            break;
+        }
+
         default:
 
             if (choice != exit_prog)
             {
-                cout << "Please enter a valid choice (1, 2, 3,4,5)";
+                cout << "Please enter a valid choice (1, 2, 3, 4, 5, 6, 7, 8)";
             }
             break;
         }
         cin.ignore();
     }
     cout << "Ending Program" << endl;
+
 
     return 0;
 }
