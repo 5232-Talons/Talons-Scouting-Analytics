@@ -1,7 +1,5 @@
 /**************************************************************************************
-Implementation of a basic routine to caluclate teams overall avg score & avg note score.
-
-
+5232 Interactive Scouting and Data Analytics
 ***************************************************************************************/
 
 #include <iostream>
@@ -9,21 +7,16 @@ Implementation of a basic routine to caluclate teams overall avg score & avg not
 #include <sstream>
 #include <string>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <iomanip>
 #include "./util/csv.hpp"
 #include <algorithm>
-#include "../../../msys64/ucrt64/include/c++/13.2.0/bits/algorithmfwd.h"
-#include <cstdio>
-
-
 
 using namespace std;
 
 /*
-This is to be depreciated
-
-Keep it in for a few more iterations incase an issue arises with CSVReader.
+This is to be deprecated
+Keep it in for a few more iterations in case an issue arises with CSVReader.
 */
 void csv_to_matrix(const string &, vector<vector<int>> &);
 
@@ -31,6 +24,7 @@ int main()
 {
     char ch_has_header{'n'};
     string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
+
     cout << "****************************************" << endl;
     cout << "  Welcome to 5232's Scouting Analytics" << endl;
     cout << "****************************************" << endl;
@@ -52,7 +46,7 @@ int main()
             matrix.push_back(row);
     }
 
-    // TODO: Move this to a Map (ordered or unorderd doesn't matter)
+    // Team numbers
     const vector<int> team_numbers = {
         1714, 1716, 1792, 1806, 2039, 2062, 2129, 2169, 2175, 2227,
         2264, 2472, 2491, 2501, 2512, 2574, 2846, 2855, 2987, 3023,
@@ -60,22 +54,23 @@ int main()
         4229, 4230, 4623, 4703, 4786, 5232, 5271, 5275, 5339, 5720,
         5913, 6044, 6045, 6047, 6132, 6147, 6419, 6574, 6758, 7273,
         7530, 7619, 8122, 8700, 8803};
-    
-    vector<double> avg_score(team_numbers.size(), 0);       // Initialize avg score vector, filled with zeroes
-    vector<double> notes_avg_score(team_numbers.size(), 0); // Initialize notes avg score vector, filled with zeroes
+
+    // Initialize vectors
+    vector<double> avg_score(team_numbers.size(), 0);
+    vector<double> notes_avg_score(team_numbers.size(), 0);
     vector<double> match_score(matrix.size(), 0);
-    size_t team_number{};
-    int count{};
-    vector<double> stdev(team_numbers.size(), 0);        // Initialize notes avg score vector, filled with zeroes
-    vector<double> driver_score(team_numbers.size(), 0); // Initialize driver score vector, filled with zeroes
+    vector<double> stdev(team_numbers.size(), 0);
+    vector<double> driver_score(team_numbers.size(), 0);
     vector<double> climbing_score(team_numbers.size(), 0);
     vector<double> human_score(team_numbers.size(), 0);
     vector<double> match_count(team_numbers.size(), 0);
 
-    // TOOD: These scores should be moved to a struct or class, this would also support qualitative data as well then.
+    // Calculate scores
     for (size_t i = 0; i < team_numbers.size(); ++i)
     {
-        team_number = team_numbers[i];
+        size_t team_number = team_numbers[i];
+        int count = 0;
+
         for (size_t j = 0; j < matrix.size(); ++j)
         {
             if (matrix[j][0] == team_number)
@@ -86,20 +81,22 @@ int main()
                 count++;
             }
         }
+
         // Calculate average score after all matches of the team are accumulated
         if (count != 0)
         {
-            avg_score[i] = avg_score[i] / count;
-            notes_avg_score[i] = notes_avg_score[i] / count;
+            avg_score[i] /= count;
+            notes_avg_score[i] /= count;
             match_count[i] = count;
         }
-        // Reset count for the next team
-        count = 0;
     }
 
+    // Calculate standard deviation
     for (size_t i = 0; i < team_numbers.size(); ++i)
     {
-        team_number = team_numbers[i];
+        size_t team_number = team_numbers[i];
+        int count = 0;
+
         for (size_t j = 0; j < matrix.size(); ++j)
         {
             if (matrix[j][0] == team_number)
@@ -108,17 +105,20 @@ int main()
                 count++;
             }
         }
+
         // Calculate average score after all matches of the team are accumulated
         if (count != 0)
         {
             stdev[i] = sqrt(stdev[i] / count);
         }
-        // Reset count for the next team
-        count = 0;
     }
 
+    // Calculate driver score
     for (size_t i = 0; i < team_numbers.size(); ++i)
     {
+        size_t team_number = team_numbers[i];
+        int count = 0;
+
         for (size_t j = 0; j < matrix.size(); ++j)
         {
             if (matrix[j][0] == team_number)
@@ -127,22 +127,24 @@ int main()
                 count++;
             }
         }
-        // Calculate averagescore after all matches of the team are accumulated
+
+        // Calculate average score after all matches of the team are accumulated
         if (count != 0)
         {
-            driver_score[i] = driver_score[i] / count;
+            driver_score[i] /= count;
         }
-
-        // Reset count for the next team
-        count = 0;
     }
 
+    // Calculate climbing score
     for (size_t i = 0; i < team_numbers.size(); ++i)
     {
+        size_t team_number = team_numbers[i];
+        int count = 0;
+
         for (size_t j = 0; j < matrix.size(); ++j)
         {
-            if (matrix[j][0] == team_numbers[i])
-            { // Fix this line
+            if (matrix[j][0] == team_number)
+            {
                 climbing_score[i] += matrix[j][5];
                 count++;
             }
@@ -151,15 +153,16 @@ int main()
         // Calculate average score after all matches of the team are accumulated
         if (count != 0)
         {
-            climbing_score[i] = climbing_score[i] / count; // Fix this line
+            climbing_score[i] /= count;
         }
-
-        // Reset count for the next team
-        count = 0;
     }
 
+    // Calculate human score
     for (size_t i = 0; i < team_numbers.size(); ++i)
     {
+        size_t team_number = team_numbers[i];
+        int count = 0;
+
         for (size_t j = 0; j < matrix.size(); ++j)
         {
             if (matrix[j][0] == team_number)
@@ -169,26 +172,18 @@ int main()
             }
         }
 
-        // Calculate averagescore after all matches of the team are accumulated
+        // Calculate average score after all matches of the team are accumulated
         if (count != 0)
         {
-            human_score[i] = human_score[i] / count;
+            human_score[i] /= count;
         }
-
-        // Reset count for the next team
-        count = 0;
     }
 
     int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
 
-
-
-    cout << "****************************************" << endl;
-
-    int exit_prog{9};
+    int exit_prog = 9;
     while (choice != exit_prog)
     {
-
         cout << "               Main Menu    " << endl;
         cout << "****************************************" << endl;
         cout << "1. View a team's data" << endl;
@@ -220,18 +215,15 @@ int main()
                     cout << "Climbing Score(0-1): " << climbing_score[y] << endl;
                     cout << "Human Score (0-5):   " << human_score[y] <<endl;
                     cout << "Match Count:         " << match_count[y] << endl;
-                
                 }
             }
-
             break;
         case 2:
             cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, climbing_score, human_score, match_count" << endl;
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
                 cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << "," << climbing_score[y] << ',' << human_score[y] << "," << match_count[y] << endl;
-                cout << endl
-                     << endl;
+                cout << endl << endl;
             }
             break;
         case 3:
@@ -253,7 +245,6 @@ int main()
             {
                 if (team_numbers[y] == blue1)
                     blue1_score = avg_score[y];
-
                 else if (team_numbers[y] == blue2)
                     blue2_score = avg_score[y];
                 else if (team_numbers[y] == blue3)
@@ -276,18 +267,14 @@ int main()
             cout << "Red: " << redtot << endl;
             cout << "Blue: " << bluetot << endl;
             
-            if(redtot != bluetot)
-              cout << (redtot > bluetot ? "Red Alliance is the projected winner." : "Blue Alliance is the projected winner.") << endl;
+            if (redtot != bluetot)
+                cout << (redtot > bluetot ? "Red Alliance is the projected winner." : "Blue Alliance is the projected winner.") << endl;
             else
-              cout << "It's a tie!";
+                cout << "It's a tie!";
 
-            cout << endl
-                 << "End of Match Simluation" << endl
-                 << endl;
-
+            cout << endl << "End of Match Simulation" << endl << endl;
             break;
-
-        case (4):
+        case 4:
         {
             char ch_has_header{'n'};
             string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
@@ -310,8 +297,7 @@ int main()
             }
             break;
         }
-            
-        case (5):
+        case 5:
         {
             vector<vector<double>> rows{};
             vector<double> row{};
@@ -337,8 +323,7 @@ int main()
 
             break;
         }
-
-        case (6): 
+        case 6: 
         {
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
@@ -346,8 +331,7 @@ int main()
             }
             break;
         }
-
-        case (7):
+        case 7:
         {
             vector<tuple<int, double, double>> teams_info;
 
@@ -364,7 +348,7 @@ int main()
 
             break;
         }
-        case (8): // New case for creating alliances
+        case 8: // New case for creating alliances
         {
             // Sort teams based on average score
             vector<pair<int, double>> sorted_teams;
@@ -378,9 +362,9 @@ int main()
             vector<vector<int>> alliances(8, vector<int>(3));
             for (int i = 0; i < 8; ++i)
             {
-                alliances[i][0] = sorted_teams[i*3].first;    // First pick
-                alliances[i][1] = sorted_teams[i*3+1].first;  // Second pick
-                alliances[i][2] = sorted_teams[23 - i*3].first; // Third pick (reverse order)
+                alliances[i][0] = sorted_teams[i * 3].first;       // First pick
+                alliances[i][1] = sorted_teams[i * 3 + 1].first;   // Second pick
+                alliances[i][2] = sorted_teams[23 - i * 3].first;  // Third pick (reverse order)
             }
 
             // Calculate total score for each alliance
@@ -414,24 +398,20 @@ int main()
             }
             break;
         }
-
         default:
-
             if (choice != exit_prog)
             {
-                cout << "Please enter a valid choice (1, 2, 3, 4, 5, 6, 7, 8)";
+                cout << "Please enter a valid choice (1, 2, 3, 4, 5, 6, 7, 8)" << endl;
             }
             break;
         }
         cin.ignore();
     }
     cout << "Ending Program" << endl;
-
-
     return 0;
 }
 
-// Converts 5232 Google Sheet to a Matrix that supports quick data maniuplation.
+// Converts 5232 Google Sheet to a Matrix that supports quick data manipulation.
 void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
 {
     ifstream file(filename);
