@@ -214,7 +214,7 @@ int main()
                     cout << "Driver Score:        " << driver_score[y] << endl;
                     cout << "Climbing Score(0-1): " << climbing_score[y] << endl;
                     cout << "Human Score (0-5):   " << human_score[y] <<endl;
-                    cout << "Match Count:         " << match_count[y] << endl;
+                    cout << "Match Count:         " << match_count[y] << endl << endl;
                 }
             }
             break;
@@ -394,7 +394,7 @@ int main()
                     }
                 }
                 cout << "Total Score: " << total_score << endl;
-                cout << endl; // Add a new line after each alliance's total score
+                cout << endl; 
             }
             break;
         }
