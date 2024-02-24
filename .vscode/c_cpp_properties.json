@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "c:\\users\\larst\\appdata\\local\\packages\\"
             ],
             "defines": [
                 "_DEBUG",

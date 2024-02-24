@@ -185,7 +185,7 @@ int main()
 
     cout << "****************************************" << endl;
 
-    int exit_prog{8};
+    int exit_prog{9};
     while (choice != exit_prog)
     {
 
@@ -198,7 +198,8 @@ int main()
         cout << "5. Save Data to CSV" << endl;
         cout << "6. Print list of teams" << endl;
         cout << "7. Print list of teams based off of best score avg" << endl;
-        cout << "8. Exit program" << endl;
+        cout << "8. Playoffs simulation " << endl;
+        cout << "9. Exit program" << endl;
         cin >> choice;
 
         switch (choice)
@@ -361,6 +362,56 @@ int main()
             for (const auto& [team, avg, dev] : teams_info)
                 cout << "Team " << team << ": Avg Score: " << fixed << setprecision(2) << avg << ", Stdev: " << dev << endl;
 
+            break;
+        }
+        case (8): // New case for creating alliances
+        {
+            // Sort teams based on average score
+            vector<pair<int, double>> sorted_teams;
+            for (size_t i = 0; i < team_numbers.size(); ++i)
+            {
+                sorted_teams.push_back({team_numbers[i], avg_score[i]});
+            }
+            sort(sorted_teams.begin(), sorted_teams.end(), [](const auto& a, const auto& b) { return a.second > b.second; });
+
+            // Divide teams into 8 alliances in a snake draft format
+            vector<vector<int>> alliances(8, vector<int>(3));
+            for (int i = 0; i < 8; ++i)
+            {
+                alliances[i][0] = sorted_teams[i*3].first;    // First pick
+                alliances[i][1] = sorted_teams[i*3+1].first;  // Second pick
+                alliances[i][2] = sorted_teams[23 - i*3].first; // Third pick (reverse order)
+            }
+
+            // Calculate total score for each alliance
+            cout << "---------------------------------" << endl;
+            cout << "Alliances and their total scores:" << endl;
+            cout << "---------------------------------" << endl;
+            for (int i = 0; i < 8; ++i)
+            {
+                double total_score = 0;
+                cout << "Alliance " << i + 1 << ": ";
+                for (size_t j = 0; j < alliances[i].size(); ++j)
+                {
+                    cout << alliances[i][j];
+                    if (j < alliances[i].size() - 1)
+                        cout << " - ";
+                    else
+                        cout << endl;
+                    
+                    // Calculate total score for the alliance
+                    for (size_t k = 0; k < team_numbers.size(); ++k)
+                    {
+                        if (team_numbers[k] == alliances[i][j])
+                        {
+                            total_score += avg_score[k];
+                            break;
+                        }
+                    }
+                }
+                cout << "Total Score: " << total_score << endl;
+                cout << endl; // Add a new line after each alliance's total score
+            }
             break;
         }
 
