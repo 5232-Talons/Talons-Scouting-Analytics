@@ -1,4 +1,4 @@
-5232 Interactive Scouting and Data Analytics
+Talons Scouting Analytics
 
 Installation and Execution:
  
