@@ -21,7 +21,7 @@ Keep it in for a few more iterations in case an issue arises with CSVReader.
 */
 void csv_to_matrix(const string &, vector<vector<int>> &);
 
-int main()
+int main()      
 {
     char ch_has_header{'n'};
     string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
@@ -77,7 +77,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5;
+                match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5 + matrix[j][12] + matrix[j][11] * 2;
                 avg_score[i] += match_score[j];
                 notes_avg_score[i] += matrix[j][1] + matrix[j][3] + 2 * matrix[j][4];
                 count++;
@@ -194,7 +194,7 @@ int main()
                 NPM[i] += static_cast<double>(matrix[j][1] + matrix[j][2] + matrix[j][3] + matrix[j][4] + matrix[j][6]);
                 count++;
             }
-        }   
+        }
 
         // Calculate average score after all matches of the team are accumulated
         if (count != 0)
@@ -202,8 +202,6 @@ int main()
             NPM[i] /= count;
         }
     }
-
-
 
     int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
 
@@ -239,9 +237,10 @@ int main()
                     cout << "Notes Avg Score:     " << notes_avg_score[y] << endl;
                     cout << "Driver Score:        " << driver_score[y] << endl;
                     cout << "Climbing Score(0-1): " << climbing_score[y] << endl;
-                    cout << "Human Score (0-5):   " << human_score[y] <<endl;
+                    cout << "Human Score (0-5):   " << human_score[y] << endl;
                     cout << "Notes Per Match:     " << NPM[y] << endl;
-                    cout << "Match Count:         " << match_count[y] << endl << endl;
+                    cout << "Match Count:         " << match_count[y] << endl
+                         << endl;
                 }
             }
             break;
@@ -250,7 +249,8 @@ int main()
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
                 cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << "," << climbing_score[y] << ',' << human_score[y] << "," << NPM[y] << "," << match_count[y] << endl;
-                cout << endl << endl;
+                cout << endl
+                     << endl;
             }
             break;
         case 3:
@@ -293,13 +293,15 @@ int main()
             cout << endl;
             cout << "Red: " << redtot << endl;
             cout << "Blue: " << bluetot << endl;
-            
+
             if (redtot != bluetot)
                 cout << (redtot > bluetot ? "Red Alliance is the projected winner." : "Blue Alliance is the projected winner.") << endl;
             else
                 cout << "It's a tie!";
 
-            cout << endl << "End of Match Simulation" << endl << endl;
+            cout << endl
+                 << "End of Match Simulation" << endl
+                 << endl;
             break;
         case 4:
         {
@@ -330,7 +332,8 @@ int main()
             vector<double> row{};
             string filename{"tmp.csv"};
 
-            for (size_t y = 0; y < avg_score.size(); ++y){
+            for (size_t y = 0; y < avg_score.size(); ++y)
+            {
                 row.clear();
                 row.push_back(team_numbers[y]);
                 row.push_back(avg_score[y]);
@@ -350,7 +353,7 @@ int main()
 
             break;
         }
-        case 6: 
+        case 6:
         {
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
@@ -366,11 +369,12 @@ int main()
                 teams_info.emplace_back(team_numbers[i], avg_score[i], stdev[i]);
 
             // Sort the vector of tuples based on the average score
-            sort(teams_info.begin(), teams_info.end(), [](const auto& a, const auto& b) { return get<1>(a) > get<1>(b); });
+            sort(teams_info.begin(), teams_info.end(), [](const auto &a, const auto &b)
+                 { return get<1>(a) > get<1>(b); });
 
             // Print the sorted teams along with their average scores and standard deviations
             cout << "Teams sorted by average score:" << endl;
-            for (const auto& [team, avg, dev] : teams_info)
+            for (const auto &[team, avg, dev] : teams_info)
                 cout << "Team " << team << ": Avg Score: " << fixed << setprecision(2) << avg << ", Stdev: " << dev << endl;
 
             break;
@@ -383,15 +387,16 @@ int main()
             {
                 sorted_teams.push_back({team_numbers[i], avg_score[i]});
             }
-            sort(sorted_teams.begin(), sorted_teams.end(), [](const auto& a, const auto& b) { return a.second > b.second; });
+            sort(sorted_teams.begin(), sorted_teams.end(), [](const auto &a, const auto &b)
+                 { return a.second > b.second; });
 
             // Divide teams into 8 alliances in a snake draft format
             vector<vector<int>> alliances(8, vector<int>(3));
             for (int i = 0; i < 8; ++i)
             {
-                alliances[i][0] = sorted_teams[i * 3].first;       // First pick
-                alliances[i][1] = sorted_teams[i * 3 + 1].first;   // Second pick
-                alliances[i][2] = sorted_teams[23 - i * 3].first;  // Third pick (reverse order)
+                alliances[i][0] = sorted_teams[i * 3].first;      // First pick
+                alliances[i][1] = sorted_teams[i * 3 + 1].first;  // Second pick
+                alliances[i][2] = sorted_teams[23 - i * 3].first; // Third pick (reverse order)
             }
 
             // Calculate total score for each alliance
@@ -409,7 +414,7 @@ int main()
                         cout << " - ";
                     else
                         cout << endl;
-                    
+
                     // Calculate total score for the alliance
                     for (size_t k = 0; k < team_numbers.size(); ++k)
                     {
@@ -421,7 +426,7 @@ int main()
                     }
                 }
                 cout << "Total Score: " << total_score << endl;
-                cout << endl; 
+                cout << endl;
             }
             break;
         }
@@ -474,5 +479,3 @@ void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
 
     file.close();
 }
-
-
