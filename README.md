@@ -24,6 +24,12 @@ Installation and Execution:
 
 8. Run the Program:
    ./'run'
+   
+9. Select save data to CSV, name file as you so choose.
+    
+10. Copy data from that CSV, and paste it into CompPS
+
+11. Copy data into first empty column. Go to data, and select split data into columns. 
 
 Program Features:
 
