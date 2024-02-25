@@ -79,7 +79,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5 + matrix[j][12] + matrix[j][11] * 2;
+                        match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5 + matrix[j][12] + matrix[j][11] * 2;
                 avg_score[i] += match_score[j];
                 notes_avg_score[i] += matrix[j][1] + matrix[j][3] + 2 * matrix[j][4];
                 count++;
