@@ -1,3 +1,4 @@
+
 /**************************************************************************************
 5232 Interactive Scouting and Data Analytics
 ***************************************************************************************/
@@ -64,6 +65,7 @@ int main()
     vector<double> climbing_score(team_numbers.size(), 0);
     vector<double> human_score(team_numbers.size(), 0);
     vector<double> match_count(team_numbers.size(), 0);
+    vector<double> NPM(team_numbers.size(), 0);
 
     // Calculate scores
     for (size_t i = 0; i < team_numbers.size(); ++i)
@@ -75,7 +77,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                match_score[j] = matrix[j][1] + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5;
+                match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5;
                 avg_score[i] += match_score[j];
                 notes_avg_score[i] += matrix[j][1] + matrix[j][3] + 2 * matrix[j][4];
                 count++;
@@ -179,6 +181,30 @@ int main()
         }
     }
 
+    // Calculate human score
+    for (size_t i = 0; i < team_numbers.size(); ++i)
+    {
+        size_t team_number = team_numbers[i];
+        int count = 0;
+
+        for (size_t j = 0; j < matrix.size(); ++j)
+        {
+            if (matrix[j][0] == team_number)
+            {
+                NPM[i] += static_cast<double>(matrix[j][1] + matrix[j][2] + matrix[j][3] + matrix[j][4] + matrix[j][6]);
+                count++;
+            }
+        }   
+
+        // Calculate average score after all matches of the team are accumulated
+        if (count != 0)
+        {
+            NPM[i] /= count;
+        }
+    }
+
+
+
     int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
 
     int exit_prog = 9;
@@ -214,15 +240,16 @@ int main()
                     cout << "Driver Score:        " << driver_score[y] << endl;
                     cout << "Climbing Score(0-1): " << climbing_score[y] << endl;
                     cout << "Human Score (0-5):   " << human_score[y] <<endl;
+                    cout << "Notes Per Match:     " << NPM[y] << endl;
                     cout << "Match Count:         " << match_count[y] << endl << endl;
                 }
             }
             break;
         case 2:
-            cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, climbing_score, human_score, match_count" << endl;
+            cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, climbing_score, human_score, NPM, match_count" << endl;
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
-                cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << "," << climbing_score[y] << ',' << human_score[y] << "," << match_count[y] << endl;
+                cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << "," << climbing_score[y] << ',' << human_score[y] << "," << NPM[y] << "," << match_count[y] << endl;
                 cout << endl << endl;
             }
             break;
@@ -447,3 +474,5 @@ void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
 
     file.close();
 }
+
+
