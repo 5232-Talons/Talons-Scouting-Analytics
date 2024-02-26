@@ -23,7 +23,7 @@ with open('robot_scores.csv', mode='w', newline='') as file:
     writer.writerow([
         'Team #', 'PointsinAUTO', 'Amp/Speaker', 'TeleopNOTESA',
         'TeleopNOTESS', 'Climb', 'TeleopNOTESTrap', 'DriverRating',
-        'HumanPlayerRating', 'CoopertitionButton', 'BotRating'
+        'HumanPlayerRating', 'CoopertitionButton', 'BotRating, Mobility, Park '
     ])
     
     # Write data for each team
@@ -37,11 +37,14 @@ with open('robot_scores.csv', mode='w', newline='') as file:
         human_player_rating = random.randint(0, 5)
         coopertition_button = random.randint(0, 1)
         bot_rating = random.randint(0, 5)
+        mobility = random.randint(0,1)
+        park = random.randint(0,1)
+
         
         # Write row for the team
         writer.writerow([
             team, points_in_auto, 0, teleop_notes_a,
             teleop_notes_s, climb, teleop_notes_trap,
             driver_rating, human_player_rating,
-            coopertition_button, bot_rating
+            coopertition_button, bot_rating, mobility, park
         ])
