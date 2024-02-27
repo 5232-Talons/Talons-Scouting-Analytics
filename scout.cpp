@@ -214,7 +214,7 @@ int main()
         cout << "1. View a team's data" << endl;
         cout << "2. Print a CSV of all team's data" << endl;
         cout << "3. Simulate a match" << endl;
-        cout << "4. Load New CSV Dataset (brokenish)" << endl;
+        cout << "4. Load New CSV Datasets" << endl;
         cout << "5. Save Data to CSV" << endl;
         cout << "6. Print list of teams" << endl;
         cout << "7. Print list of teams based off of best score avg" << endl;
@@ -324,6 +324,24 @@ int main()
                 for (const auto &row : value)
                     matrix.push_back(row);
             }
+
+            cout << "Enter other filename to load: ";
+            cin >> filename2;
+            cout << '\n';
+
+            cout << "Does this CSV file have a header (y/n): ";
+            cin >> ch_has_header;
+            cout << '\n';
+
+            auto result2 = CSVReader(filename2).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
+
+            vector<vector<int>> matrix2{};
+            for (const auto &[key, value] : result2)
+            {
+                for (const auto &row : value)
+                    matrix2.push_back(row);
+            }
+
             break;
         }
         case 5:
