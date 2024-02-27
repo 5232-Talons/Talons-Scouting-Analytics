@@ -17,7 +17,7 @@ data = readmatrix(csv_file);
 team_5232_rows = data(data(:, 1) == 5232, :);
 
 % Sum rows 2, 3, 4, and 5 for each occurrence of team 5232
-npm_values = sum(team_5232_rows(:, 2:5), 2);
+npm_values = sum(team_5232_rows(:, 2), 2);
 
 % Calculate the number of occurrences
 occurrences = 1:numel(npm_values);

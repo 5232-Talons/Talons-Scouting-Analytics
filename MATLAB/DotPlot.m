@@ -15,11 +15,11 @@ function plotClimbingVsPPM()
     data = readmatrix(csv_file);
 
     % Get climbing score (column 6) and points per match (PPM)
-    climbing_score = data(:, 6);
+    driver_score = data(:, 5);
     ppm = data(:, 2); % PPM is column 2
 
     % Plot dot plot
-    scatter(ppm, climbing_score, 'o', 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b');
+    scatter(ppm, driver_score, 'o', 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b');
     
     % Set labels and title
     xlabel('Points Per Match (PPM)');
@@ -30,7 +30,7 @@ function plotClimbingVsPPM()
     % Add team labels
     team_numbers = data(:, 1); % Team numbers from column 1
     for i = 1:length(team_numbers)
-        text(ppm(i), climbing_score(i), num2str(team_numbers(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right');
+        text(ppm(i), driver_score(i), num2str(team_numbers(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right');
     end
 end
 

@@ -18,8 +18,7 @@ function    plotNPMvsOccurrences()
     unique_teams = unique(data(:, 1));
 
     % Initialize a cell array to store NPM values for each team
-    npm_values_all = cell(size(unique_teams));
-
+    npm_values_all = data(:, 2); % PPM is column 2
     % Iterate over unique teams
     for i = 1:numel(unique_teams)
         % Plot NPM vs occurrences for the current team

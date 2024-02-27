@@ -27,12 +27,12 @@ int main()
 {
     char ch_has_header{'n'};
     string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
-
+    string filename2;
     cout << "****************************************" << endl;
     cout << "  Welcome to 5232's Scouting Analytics" << endl;
     cout << "****************************************" << endl;
 
-    cout << "Enter filename to load: ";
+    cout << "Enter main filename to load: ";
     cin >> filename;
     cout << '\n';
 
@@ -49,14 +49,31 @@ int main()
             matrix.push_back(row);
     }
 
+    cout << "Enter other filename to load: ";
+    cin >> filename2;
+    cout << '\n';
+
+    cout << "Does this CSV file have a header (y/n): ";
+    cin >> ch_has_header;
+    cout << '\n';
+
+    auto result2 = CSVReader(filename2).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
+
+    vector<vector<int>> matrix2{};
+    for (const auto &[key, value] : result2)
+    {
+        for (const auto &row : value)
+            matrix2.push_back(row);
+    }
+
     // Team numbers
     const vector<int> team_numbers = {
-        1714, 1716, 1792, 1806, 2039, 2062, 2129, 2169, 2175, 2227,
-        2264, 2472, 2491, 2501, 2512, 2574, 2846, 2855, 2987, 3023,
-        3082, 3100, 3130, 3206, 3212, 3297, 3418, 3883, 4166, 4182,
-        4229, 4230, 4623, 4703, 4786, 5232, 5271, 5275, 5339, 5720,
-        5913, 6044, 6045, 6047, 6132, 6147, 6419, 6574, 6758, 7273,
-        7530, 7619, 8122, 8700, 8803};
+        1714, 1716, 1792, 1806, 2039, 2062, 2129, 2169, 2175, 2227, 2264, 2472, 2491,
+        2501, 2512, 2574, 2846, 2855, 2987, 3023, 3082, 3100, 3130, 3206, 3212, 3297,
+        3418, 3883, 4166, 4182, 4229, 4230, 4623, 4703, 4786, 5232, 5271, 5275, 5339,
+        5720, 5913, 6044, 6045, 6047, 6132, 6147, 6419, 6574, 6758, 7273, 7530, 7619,
+        8122, 8700, 8803
+    };
 
     // Initialize vectors
     vector<double> avg_score(team_numbers.size(), 0);
@@ -79,13 +96,17 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                        match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 3 + matrix[j][6] * 5 + matrix[j][12] + matrix[j][11] * 2;
+                match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 5; 
                 avg_score[i] += match_score[j];
-                notes_avg_score[i] += matrix[j][1] + matrix[j][3] + 2 * matrix[j][4];
+                notes_avg_score[i] += match_score[j];
                 count++;
             }
         }
-
+        for(int z = 0; z < matrix2.size(); z++ ){
+            if(matrix2[z][0] == team_number){
+                avg_score[i] += matrix2[z][1] * 3 + matrix2[z][2] + matrix2[z][3]* 2;
+            }
+        }
         // Calculate average score after all matches of the team are accumulated
         if (count != 0)
         {
@@ -127,7 +148,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                driver_score[i] += matrix[j][7];
+                driver_score[i] += matrix[j][6];
                 count++;
             }
         }
@@ -136,28 +157,6 @@ int main()
         if (count != 0)
         {
             driver_score[i] /= count;
-        }
-    }
-
-    // Calculate climbing score
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
-        size_t team_number = team_numbers[i];
-        int count = 0;
-
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
-            if (matrix[j][0] == team_number)
-            {
-                climbing_score[i] += matrix[j][5];
-                count++;
-            }
-        }
-
-        // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
-            climbing_score[i] /= count;
         }
     }
 
@@ -171,7 +170,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                human_score[i] += matrix[j][8];
+                human_score[i] += matrix[j][7];
                 count++;
             }
         }
@@ -193,7 +192,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                NPM[i] += static_cast<double>(matrix[j][1] + matrix[j][2] + matrix[j][3] + matrix[j][4] + matrix[j][6]);
+                NPM[i] += static_cast<double>(matrix[j][1] + matrix[j][2] + matrix[j][3] + matrix[j][4] + matrix[j][5]);
                 count++;
             }
         }
@@ -215,7 +214,7 @@ int main()
         cout << "1. View a team's data" << endl;
         cout << "2. Print a CSV of all team's data" << endl;
         cout << "3. Simulate a match" << endl;
-        cout << "4. Load New CSV Dataset" << endl;
+        cout << "4. Load New CSV Dataset (brokenish)" << endl;
         cout << "5. Save Data to CSV" << endl;
         cout << "6. Print list of teams" << endl;
         cout << "7. Print list of teams based off of best score avg" << endl;
@@ -238,7 +237,6 @@ int main()
                     cout << "Stdev of Avg Score:  " << stdev[y] << endl;
                     cout << "Notes Avg Score:     " << notes_avg_score[y] << endl;
                     cout << "Driver Score:        " << driver_score[y] << endl;
-                    cout << "Climbing Score(0-1): " << climbing_score[y] << endl;
                     cout << "Human Score (0-5):   " << human_score[y] << endl;
                     cout << "Notes Per Match:     " << NPM[y] << endl;
                     cout << "Match Count:         " << match_count[y] << endl
@@ -247,10 +245,10 @@ int main()
             }
             break;
         case 2:
-            cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, climbing_score, human_score, NPM, match_count" << endl;
+            cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, human_score, NPM, match_count" << endl;
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
-                cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << "," << climbing_score[y] << ',' << human_score[y] << "," << NPM[y] << "," << match_count[y] << endl;
+                cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << ',' << human_score[y] << "," << NPM[y] << "," << match_count[y] << endl;
                 cout << endl
                      << endl;
             }

@@ -11,11 +11,11 @@ Installation and Execution:
 3. Download the Software: Obtain the software files from the github repository or request zip file from a dev.
 
 4. Download Scouting Data:
-   - Access the Matrix tab of 5232's Scouting Google Sheet.
-   - Download the data as a CSV file.
+   - Access both of the Matrix tabs of 5232's Scouting Google Sheet.
+   - Download the data as a CSV file. You must do this for each file individually
 
 5. Place CSV File:
-   - Ensure the downloaded CSV file is in the same directory as `scout.cpp`.
+   - Ensure the downloaded CSV files are in the same directory as `scout.cpp`.
 
 6. Navigate to the Directory: Access the directory containing the software using your prefered terminal or command prompt or terminal within VScode.
 
@@ -24,7 +24,7 @@ Installation and Execution:
 
 8. Run the Program:
    ./'run'
-   
+      NOTE CSV ONE WILL BE THE BIG CSV, AND CSV 2 is the SCOUTLESS CSV
 9. Select save data to CSV, name file as you so choose.
     
 10. Copy data from that CSV, and paste it into CompPS
