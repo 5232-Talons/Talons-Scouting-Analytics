@@ -23,8 +23,8 @@ function plotClimbingVsPPM()
     
     % Set labels and title
     xlabel('Points Per Match (PPM)');
-    ylabel('Climbing Score');
-    title('Climbing Score vs Points Per Match');
+    ylabel('Driver Score');
+    title('Driver Score vs Points Per Match');
     grid on;
     
     % Add team labels

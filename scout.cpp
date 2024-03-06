@@ -356,10 +356,10 @@ int main()
                 row.push_back(team_numbers[y]);
                 row.push_back(avg_score[y]);
                 row.push_back(notes_avg_score[y]);
-                row.push_back(stdev[0]);
+                row.push_back(stdev[y]);
                 row.push_back(driver_score[y]);
-                row.push_back(climbing_score[y]);
                 row.push_back(human_score[y]);
+                row.push_back(NPM[y]);
                 row.push_back(match_count[y]);
                 rows.push_back(row);
             }
