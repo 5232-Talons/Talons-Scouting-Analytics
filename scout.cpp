@@ -17,25 +17,19 @@ lars + slim
 
 using namespace std;
 
-
 void csv_to_matrix(const string &, vector<vector<int>> &);
 bool endsWithCsv(const string&);
 bool hasEmptyRows(const string&);
 bool isFirstRowNumeric(const string&);
 void findNonNumericData(const string&, vector<pair<int, int>>&);
 
-int main()      
-{
+
+int main(){
+#pragma region // Analytic Setup & computations
     vector<pair<int, int>> nonNumericLocations;
-    vector<pair<int, int>> nonNumericLocations2;
-
-    int as; // auto speaker
-    int aa; // auto amp
-    int ts; // telop speaker
-    int ta; // telop amp
-    int tt; // telop trap
-
+    int as{}, aa{}, ts{}, ta{}, tt{};
     char ch_has_header{'n'};
+    bool header = false;
 
     string filename1 = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
     string filename2;
@@ -58,9 +52,6 @@ int main()
         cout << endl << "ERROR - this file has empty rows" << endl;
         return 1;
     }
-    if(!(isFirstRowNumeric(filename1))){
-        ch_has_header = 'y';
-    }
 
     findNonNumericData(filename1, nonNumericLocations);
     if (!nonNumericLocations.empty()){
@@ -70,41 +61,41 @@ int main()
             }
         }
     } 
+    nonNumericLocations.clear();
 
 //**** Feed CSV data to matrix ****
 
-    auto result = CSVReader(filename1).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
+    auto result1 = CSVReader(filename1).ParseCSV(isFirstRowNumeric(filename1) ? false : true).GetResults();
 
     vector<vector<int>> matrix1{};
-    for (const auto &[key, value] : result){
+    for (const auto &[key, value] : result1){
         for (const auto &row : value)
             matrix1.push_back(row);
     }
 
 //**** Accept User Input for columns ****
 
-    cout << "What column is auto notes in speaker?" << endl;
-    cin >> as;
-    as--;
+        cout << "What column is auto notes in speaker?" << endl;
+        cin >> as;
+        as--;
 
-    cout << "What column is auto notes in amp?" << endl;
-    cin >> aa;
-    aa--;
+        cout << "What column is auto notes in amp?" << endl;
+        cin >> aa;
+        aa--;
 
-    cout << "What column is telop notes in speaker?" << endl;
-    cin >> ts;
-    ts--;
+        cout << "What column is telop notes in speaker?" << endl;
+        cin >> ts;
+        ts--;
 
-    cout << "What column is telop notes in amp?" << endl;
-    cin >> ta;
-    ta--;
+        cout << "What column is telop notes in amp?" << endl;
+        cin >> ta;
+        ta--;
 
-    cout << "What column is telop notes in trap?" << endl;
-    cin >> tt;
-    tt--;
+        cout << "What column is telop notes in trap?" << endl;
+        cin >> tt;
+        tt--;
 
-    cout << endl << endl;
-
+        cout << endl << endl;
 //**** Input Scoutless Data ****
 
     cout << "Enter your csv of scoutless data. This data must be averaged per team prior to input into this script" << endl;
@@ -123,29 +114,29 @@ int main()
         return 1;
     }
     if(!(isFirstRowNumeric(filename2))){
-        ch_has_header = 'y';
+        header = true;
     }
-
-    findNonNumericData(filename2, nonNumericLocations2);
-    if (!nonNumericLocations2.empty()){
-        for (const auto& location : nonNumericLocations2){
-            if(location.first == 1){
-                break;
-            }
+    findNonNumericData(filename2, nonNumericLocations);
+    if (!nonNumericLocations.empty()){
+        for (const auto& location : nonNumericLocations){
+            if(location.first != 1){
             cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
+            }
         }
+        return 1;
     } 
 
-    auto result2 = CSVReader(filename2).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
 
+    auto result2 = CSVReader(filename2).ParseCSV(isFirstRowNumeric(filename2) ? false : true).GetResults();
+
+// Populate matrix 2
     vector<vector<int>> matrix2{};
     for (const auto &[key, value] : result2){
         for (const auto &row : value)
-            matrix2.push_back(row);
+            matrix2.push_back(row);   
     }
-
-// Team numbers
-
+    
+// Populate vector team numbers
     vector<int> team_numbers(matrix2.size());
 
     for(size_t i = 0; i < matrix2.size(); ++i){
@@ -157,9 +148,7 @@ int main()
     vector<double> notes_avg_score(team_numbers.size(), 0);
     vector<double> match_score(matrix1.size(), 0);
     vector<double> stdev(team_numbers.size(), 0);
-    vector<double> driver_score(team_numbers.size(), 0);
     vector<double> climbing_score(team_numbers.size(), 0);
-    vector<double> human_score(team_numbers.size(), 0);
     vector<double> match_count(team_numbers.size(), 0);
     vector<double> NPM(team_numbers.size(), 0);
 
@@ -181,9 +170,6 @@ int main()
                 avg_score[i] += matrix2[z][1] * 3 + matrix2[z][2] + matrix2[z][3]* 2;
             }
         }
-
-// Calculate average score after all matches of the team are accumulated
-
         if (count != 0){
             avg_score[i] /= count;
             notes_avg_score[i] /= count;
@@ -192,7 +178,6 @@ int main()
     }
 
 // Calculate standard deviation
-
     for (size_t i = 0; i < team_numbers.size(); ++i){
         size_t team_number = team_numbers[i];
         int count = 0;
@@ -203,79 +188,17 @@ int main()
                 count++;
             }
         }
-
-// Calculate average score after all matches of the team are accumulated
-
         if (count != 0){
             stdev[i] = sqrt(stdev[i] / count);
         }
     }
+#pragma endregion
 
-// Calculate driver score
-
-    for (size_t i = 0; i < team_numbers.size(); ++i){
-        size_t team_number = team_numbers[i];
-        int count = 0;
-
-        for (size_t j = 0; j < matrix1.size(); ++j){
-            if (matrix1[j][0] == team_number){
-                driver_score[i] += matrix1[j][6];
-                count++;
-            }
-        }
-
-// Calculate average score after all matches of the team are accumulated
-
-        if (count != 0){
-            driver_score[i] /= count;
-        }
-    }
-
-// Calculate human score
-
-    for (size_t i = 0; i < team_numbers.size(); ++i){
-        size_t team_number = team_numbers[i];
-        int count = 0;
-
-        for (size_t j = 0; j < matrix1.size(); ++j){
-            if (matrix1[j][0] == team_number){
-                human_score[i] += matrix1[j][7];
-                count++;
-            }
-        }
-
-// Calculate average score after all matches of the team are accumulated
-
-        if (count != 0){
-            human_score[i] /= count;
-        }
-    }
-
-// Calculate human score
-
-    for (size_t i = 0; i < team_numbers.size(); ++i){
-        size_t team_number = team_numbers[i];
-        int count = 0;
-
-        for (size_t j = 0; j < matrix1.size(); ++j){
-            if (matrix1[j][0] == team_number){
-                NPM[i] += static_cast<double>(matrix1[j][aa] + matrix1[j][as] + matrix1[j][ta] + matrix1[j][ts] + matrix1[j][tt]);
-                count++;
-            }
-        }
-
-// Calculate average score after all matches of the team are accumulated
-
-        if (count != 0){
-            NPM[i] /= count;
-        }
-    }
-
-    int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
-    int exit_prog = 9;
-
-
+    int choice{};
+    const int exit_prog = 9;
+//**** MAIN MENU ****
     while (choice != exit_prog){
+        int team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
 
         cout << "               Main Menu    " << endl;
         cout << "****************************************" << endl;
@@ -304,19 +227,16 @@ int main()
                     cout << "Average Score:       " << avg_score[y] << endl;
                     cout << "Stdev of Avg Score:  " << stdev[y] << endl;
                     cout << "Notes Avg Score:     " << notes_avg_score[y] << endl;
-                    cout << "Driver Score:        " << driver_score[y] << endl;
-                    cout << "Human Score (0-5):   " << human_score[y] << endl;
                     cout << "Notes Per Match:     " << NPM[y] << endl;
-                    cout << "Match Count:         " << match_count[y] << endl
-                         << endl;
+                    cout << "Match Count:         " << match_count[y] << endl << endl;
                 }
             }
             break;
         case 2:
-            cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, human_score, NPM, match_count" << endl;
+            cout << "Team Number,Average Score,Notes Average Score, stdev, NPM, match_count" << endl;
             for (size_t y = 0; y < avg_score.size(); ++y){
 
-                cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << ',' << human_score[y] << "," << NPM[y] << "," << match_count[y] << endl;
+                cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << NPM[y] << "," << match_count[y] << endl;
                 cout << endl
                      << endl;
             }
@@ -384,10 +304,10 @@ int main()
             cin >> ch_has_header;
             cout << '\n';
 
-            auto result = CSVReader(filename1).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
+            auto result1 = CSVReader(filename1).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
 
             vector<vector<int>> matrix1{};
-            for (const auto &[key, value] : result){
+            for (const auto &[key, value] : result1){
                 for (const auto &row : value)
                     matrix1.push_back(row);
             }
@@ -423,8 +343,6 @@ int main()
                 row.push_back(avg_score[y]);
                 row.push_back(notes_avg_score[y]);
                 row.push_back(stdev[y]);
-                row.push_back(driver_score[y]);
-                row.push_back(human_score[y]);
                 row.push_back(NPM[y]);
                 row.push_back(match_count[y]);
                 rows.push_back(row);
@@ -521,8 +439,10 @@ int main()
     return 0;
 }
 
-// Converts 5232 Google Sheet to a Matrix that supports quick data manipulation.
 
+//**** FUNCTIONS ****
+
+// Converts 5232 Google Sheet to a Matrix that supports quick data manipulation.
 void csv_to_matrix(const string &filename1, vector<vector<int>> &score_matrix){
     ifstream file(filename1);
 
@@ -554,7 +474,6 @@ void csv_to_matrix(const string &filename1, vector<vector<int>> &score_matrix){
 }
 
 // Checks if file ends with .csv
-
 bool endsWithCsv(const string& str){
     if (str.length() >= 4){
         return (str.substr(str.length() - 4) == ".csv");
@@ -612,7 +531,6 @@ bool isFirstRowNumeric(const string& filename){
 }
 
 // Function - find non numeric data
-
 void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumericLocations){
     ifstream file(filename);
     string line;
@@ -654,7 +572,7 @@ void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumer
                 // Check if the cell contains only numeric characters
                 bool numeric = true;
                 for (char c : cell){
-                    if (!isdigit(c) && c != '.' && c != '-'){
+                    if (!isdigit(c) && c != '.'){
                         numeric = false;
                         break;
                     }
