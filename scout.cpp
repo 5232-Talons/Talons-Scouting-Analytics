@@ -2,7 +2,7 @@
 /**************************************************************************************
 TSA - TALONS SCOUTING ANALYTICS
 
-
+lars + slim
 ***************************************************************************************/
 
 #include <iostream>
@@ -17,95 +17,102 @@ TSA - TALONS SCOUTING ANALYTICS
 
 using namespace std;
 
-/*
-This is to be deprecated
-Keep it in for a few more iterations in case an issue arises with CSVReader.
-*/
+
 void csv_to_matrix(const string &, vector<vector<int>> &);
-bool endsWithCsv(const string& str);
-bool hasEmptyRows(const string& filename);
-bool isFirstRowNumeric(const string& filename);
-void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumericLocations);
+bool endsWithCsv(const string&);
+bool hasEmptyRows(const string&);
+bool isFirstRowNumeric(const string&);
+void findNonNumericData(const string&, vector<pair<int, int>>&);
 
 int main()      
 {
     vector<pair<int, int>> nonNumericLocations;
-    int as; //auto speaker
-    int aa; //auto amp
-    int ts; //telop speaker
-    int ta; //telop amp
-    int tt; //telop trap
+    vector<pair<int, int>> nonNumericLocations2;
+
+    int as; // auto speaker
+    int aa; // auto amp
+    int ts; // telop speaker
+    int ta; // telop amp
+    int tt; // telop trap
+
     char ch_has_header{'n'};
-    string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
+
+    string filename1 = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
     string filename2;
+
     cout << "****************************************" << endl;
     cout << "  Welcome to 5232's Scouting Analytics" << endl;
     cout << "****************************************" << endl;
     cout << "Your first csv should be a matrix of each teams match performance such that column 1 is team number, and the rest of the columns are other data" << endl;
     cout << "Enter main filename to load: ";
-    cin >> filename;
+    cin >> filename1;
     cout << '\n';
-    if(!(endsWithCsv(filename))){
+
+//**** Bad Data Checks **** 
+
+    if(!(endsWithCsv(filename1))){
         cout << endl << "ERROR - your match data is not a .csv" << endl;
         return 1;
     }
-    if(hasEmptyRows(filename)){
+    if(hasEmptyRows(filename1)){
         cout << endl << "ERROR - this file has empty rows" << endl;
         return 1;
     }
-    if(!(isFirstRowNumeric(filename))){
+    if(!(isFirstRowNumeric(filename1))){
         ch_has_header = 'y';
     }
 
-    findNonNumericData(filename, nonNumericLocations);
-    if (!nonNumericLocations.empty()) {
-        for (const auto& location : nonNumericLocations) {
+    findNonNumericData(filename1, nonNumericLocations);
+    if (!nonNumericLocations.empty()){
+        for (const auto& location : nonNumericLocations){
             if(location.first != 1){
             cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
             }
         }
-    } else {
-        cout << "The file does not have non-numeric data." << endl;
-    }
+    } 
 
-    auto result = CSVReader(filename).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
+//**** Feed CSV data to matrix ****
 
-    vector<vector<int>> matrix{};
-    for (const auto &[key, value] : result)
-    {
+    auto result = CSVReader(filename1).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
+
+    vector<vector<int>> matrix1{};
+    for (const auto &[key, value] : result){
         for (const auto &row : value)
-            matrix.push_back(row);
+            matrix1.push_back(row);
     }
 
-    cout << "What column is auto notes in speaker? (Please count rows from the first row (row 0) foward)" << endl;
-    cin >> as;
+//**** Accept User Input for columns ****
 
-    cout << "What column is auto notes in amp? (Please count rows from the first row (row 0) foward)" << endl;
+    cout << "What column is auto notes in speaker?" << endl;
+    cin >> as;
+    as--;
+
+    cout << "What column is auto notes in amp?" << endl;
     cin >> aa;
-    
-    cout << "What column is telop notes in speaker? (Please count rows from the first row (row 0) foward)" << endl;
+    aa--;
+
+    cout << "What column is telop notes in speaker?" << endl;
     cin >> ts;
-    
-    cout << "What column is telop notes in amp? (Please count rows from the first row (row 0) foward)" << endl;
+    ts--;
+
+    cout << "What column is telop notes in amp?" << endl;
     cin >> ta;
-    
-    cout << "What column is telop notes in trap? (Please count rows from the first row (row 0) foward)" << endl;
+    ta--;
+
+    cout << "What column is telop notes in trap?" << endl;
     cin >> tt;
+    tt--;
+
     cout << endl << endl;
+
+//**** Input Scoutless Data ****
+
     cout << "Enter your csv of scoutless data. This data must be averaged per team prior to input into this script" << endl;
     cout << " Also note, this matrix should be a num_teams x data_points such that the columns are teams, climb count, park count, climb count" << endl;
     cin >> filename2;
     cout << '\n';
 
-    findNonNumericData(filename2, nonNumericLocations);
-    if (!nonNumericLocations.empty()) {
-        for (const auto& location : nonNumericLocations) {
-            if(location.first == 1){
-                break;
-            }
-            cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
-        }
-    } 
+//**** Bad Data Parsing ****
 
     if(!(endsWithCsv(filename2))){
         cout << endl << "ERROR - your scoutless data is not a .csv" << endl;
@@ -119,28 +126,36 @@ int main()
         ch_has_header = 'y';
     }
 
+    findNonNumericData(filename2, nonNumericLocations2);
+    if (!nonNumericLocations2.empty()){
+        for (const auto& location : nonNumericLocations2){
+            if(location.first == 1){
+                break;
+            }
+            cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
+        }
+    } 
+
     auto result2 = CSVReader(filename2).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
 
     vector<vector<int>> matrix2{};
-    for (const auto &[key, value] : result2)
-    {
+    for (const auto &[key, value] : result2){
         for (const auto &row : value)
             matrix2.push_back(row);
     }
 
-    // Team numbers
 // Team numbers
+
     vector<int> team_numbers(matrix2.size());
 
-    for(int i = 0; i < matrix2.size(); ++i){
+    for(size_t i = 0; i < matrix2.size(); ++i){
         team_numbers[i] = matrix2[i][0];
     }
 
-
-    // Initialize vectors
+// Initialize vectors
     vector<double> avg_score(team_numbers.size(), 0);
     vector<double> notes_avg_score(team_numbers.size(), 0);
-    vector<double> match_score(matrix.size(), 0);
+    vector<double> match_score(matrix1.size(), 0);
     vector<double> stdev(team_numbers.size(), 0);
     vector<double> driver_score(team_numbers.size(), 0);
     vector<double> climbing_score(team_numbers.size(), 0);
@@ -148,129 +163,120 @@ int main()
     vector<double> match_count(team_numbers.size(), 0);
     vector<double> NPM(team_numbers.size(), 0);
 
-    // Calculate scores
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
+// Calculate scores
+    for (size_t i = 0; i < team_numbers.size(); ++i){
         size_t team_number = team_numbers[i];
         int count = 0;
 
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
-            if (matrix[j][0] == team_number)
-            {
-                match_score[j] = matrix[j][aa] * 2 + matrix[j][as] * 5 + matrix[j][ta] + 2 * matrix[j][ts] + matrix[j][tt] * 5; 
+        for (size_t j = 0; j < matrix1.size(); ++j){
+            if (matrix1[j][0] == team_number){
+                match_score[j] = matrix1[j][aa] * 2 + matrix1[j][as] * 5 + matrix1[j][ta] + 2 * matrix1[j][ts] + matrix1[j][tt] * 5; 
                 avg_score[i] += match_score[j];
                 notes_avg_score[i] += match_score[j];
                 count++;
             }
         }
-        for(int z = 0; z < matrix2.size(); z++ ){
+        for(size_t z = 0; z < matrix2.size(); z++ ){
             if(matrix2[z][0] == team_number){
                 avg_score[i] += matrix2[z][1] * 3 + matrix2[z][2] + matrix2[z][3]* 2;
             }
         }
-        // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
+
+// Calculate average score after all matches of the team are accumulated
+
+        if (count != 0){
             avg_score[i] /= count;
             notes_avg_score[i] /= count;
             match_count[i] = count;
         }
     }
 
-    // Calculate standard deviation
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
+// Calculate standard deviation
+
+    for (size_t i = 0; i < team_numbers.size(); ++i){
         size_t team_number = team_numbers[i];
         int count = 0;
 
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
-            if (matrix[j][0] == team_number)
-            {
+        for (size_t j = 0; j < matrix1.size(); ++j){
+            if (matrix1[j][0] == team_number){
                 stdev[i] += pow(avg_score[i] - match_score[j], 2);
                 count++;
             }
         }
 
-        // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
+// Calculate average score after all matches of the team are accumulated
+
+        if (count != 0){
             stdev[i] = sqrt(stdev[i] / count);
         }
     }
 
-    // Calculate driver score
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
+// Calculate driver score
+
+    for (size_t i = 0; i < team_numbers.size(); ++i){
         size_t team_number = team_numbers[i];
         int count = 0;
 
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
-            if (matrix[j][0] == team_number)
-            {
-                driver_score[i] += matrix[j][6];
+        for (size_t j = 0; j < matrix1.size(); ++j){
+            if (matrix1[j][0] == team_number){
+                driver_score[i] += matrix1[j][6];
                 count++;
             }
         }
 
-        // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
+// Calculate average score after all matches of the team are accumulated
+
+        if (count != 0){
             driver_score[i] /= count;
         }
     }
 
-    // Calculate human score
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
+// Calculate human score
+
+    for (size_t i = 0; i < team_numbers.size(); ++i){
         size_t team_number = team_numbers[i];
         int count = 0;
 
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
-            if (matrix[j][0] == team_number)
-            {
-                human_score[i] += matrix[j][7];
+        for (size_t j = 0; j < matrix1.size(); ++j){
+            if (matrix1[j][0] == team_number){
+                human_score[i] += matrix1[j][7];
                 count++;
             }
         }
 
-        // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
+// Calculate average score after all matches of the team are accumulated
+
+        if (count != 0){
             human_score[i] /= count;
         }
     }
 
-    // Calculate human score
-    for (size_t i = 0; i < team_numbers.size(); ++i)
-    {
+// Calculate human score
+
+    for (size_t i = 0; i < team_numbers.size(); ++i){
         size_t team_number = team_numbers[i];
         int count = 0;
 
-        for (size_t j = 0; j < matrix.size(); ++j)
-        {
-            if (matrix[j][0] == team_number)
-            {
-                NPM[i] += static_cast<double>(matrix[j][aa] + matrix[j][as] + matrix[j][ta] + matrix[j][ts] + matrix[j][tt]);
+        for (size_t j = 0; j < matrix1.size(); ++j){
+            if (matrix1[j][0] == team_number){
+                NPM[i] += static_cast<double>(matrix1[j][aa] + matrix1[j][as] + matrix1[j][ta] + matrix1[j][ts] + matrix1[j][tt]);
                 count++;
             }
         }
 
-        // Calculate average score after all matches of the team are accumulated
-        if (count != 0)
-        {
+// Calculate average score after all matches of the team are accumulated
+
+        if (count != 0){
             NPM[i] /= count;
         }
     }
 
     int choice{}, team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
-
     int exit_prog = 9;
-    while (choice != exit_prog)
-    {
+
+
+    while (choice != exit_prog){
+
         cout << "               Main Menu    " << endl;
         cout << "****************************************" << endl;
         cout << "1. View a team's data" << endl;
@@ -284,14 +290,14 @@ int main()
         cout << "9. Exit program" << endl;
         cin >> choice;
 
-        switch (choice)
-        {
+        switch (choice){
+
         case 1:
             cout << "Please Enter the team's data you want: ";
             cin >> team;
             cout << endl;
-            for (size_t y = 0; y < avg_score.size(); ++y)
-            {
+            for (size_t y = 0; y < avg_score.size(); ++y){
+
                 if (team_numbers[y] == team)
                 {
                     cout << "Team Number:         " << team_numbers[y] << endl;
@@ -308,8 +314,8 @@ int main()
             break;
         case 2:
             cout << "Team Number,Average Score,Notes Average Score, stdev, driver_score, human_score, NPM, match_count" << endl;
-            for (size_t y = 0; y < avg_score.size(); ++y)
-            {
+            for (size_t y = 0; y < avg_score.size(); ++y){
+
                 cout << team_numbers[y] << "," << avg_score[y] << "," << notes_avg_score[y] << "," << stdev[y] << "," << driver_score[y] << ',' << human_score[y] << "," << NPM[y] << "," << match_count[y] << endl;
                 cout << endl
                      << endl;
@@ -330,8 +336,8 @@ int main()
             cout << "Red 3: ";
             cin >> red3;
 
-            for (size_t y = 0; y < avg_score.size(); ++y)
-            {
+            for (size_t y = 0; y < avg_score.size(); ++y){
+
                 if (team_numbers[y] == blue1)
                     blue1_score = avg_score[y];
                 else if (team_numbers[y] == blue2)
@@ -368,23 +374,22 @@ int main()
         case 4:
         {
             char ch_has_header{'n'};
-            string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
+            string filename1 = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
 
             cout << "Enter filename to load: ";
-            cin >> filename;
+            cin >> filename1;
             cout << '\n';
 
             cout << "Does this CSV file have a header (y/n): ";
             cin >> ch_has_header;
             cout << '\n';
 
-            auto result = CSVReader(filename).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
+            auto result = CSVReader(filename1).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
 
-            vector<vector<int>> matrix{};
-            for (const auto &[key, value] : result)
-            {
+            vector<vector<int>> matrix1{};
+            for (const auto &[key, value] : result){
                 for (const auto &row : value)
-                    matrix.push_back(row);
+                    matrix1.push_back(row);
             }
 
             cout << "Enter other filename to load: ";
@@ -398,8 +403,7 @@ int main()
             auto result2 = CSVReader(filename2).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
 
             vector<vector<int>> matrix2{};
-            for (const auto &[key, value] : result2)
-            {
+            for (const auto &[key, value] : result2){
                 for (const auto &row : value)
                     matrix2.push_back(row);
             }
@@ -412,8 +416,8 @@ int main()
             vector<double> row{};
             string filename{"tmp.csv"};
 
-            for (size_t y = 0; y < avg_score.size(); ++y)
-            {
+            for (size_t y = 0; y < avg_score.size(); ++y){
+
                 row.clear();
                 row.push_back(team_numbers[y]);
                 row.push_back(avg_score[y]);
@@ -459,12 +463,11 @@ int main()
 
             break;
         }
-        case 8: // New case for creating alliances
+        case 8: 
         {
             // Sort teams based on average score
             vector<pair<int, double>> sorted_teams;
-            for (size_t i = 0; i < team_numbers.size(); ++i)
-            {
+            for (size_t i = 0; i < team_numbers.size(); ++i){
                 sorted_teams.push_back({team_numbers[i], avg_score[i]});
             }
             sort(sorted_teams.begin(), sorted_teams.end(), [](const auto &a, const auto &b)
@@ -472,8 +475,7 @@ int main()
 
             // Divide teams into 8 alliances in a snake draft format
             vector<vector<int>> alliances(8, vector<int>(3));
-            for (int i = 0; i < 8; ++i)
-            {
+            for (int i = 0; i < 8; ++i){
                 alliances[i][0] = sorted_teams[i * 3].first;      // First pick
                 alliances[i][1] = sorted_teams[i * 3 + 1].first;  // Second pick
                 alliances[i][2] = sorted_teams[23 - i * 3].first; // Third pick (reverse order)
@@ -483,12 +485,10 @@ int main()
             cout << "---------------------------------" << endl;
             cout << "Alliances and their total scores:" << endl;
             cout << "---------------------------------" << endl;
-            for (int i = 0; i < 8; ++i)
-            {
+            for (int i = 0; i < 8; ++i){
                 double total_score = 0;
                 cout << "Alliance " << i + 1 << ": ";
-                for (size_t j = 0; j < alliances[i].size(); ++j)
-                {
+                for (size_t j = 0; j < alliances[i].size(); ++j){
                     cout << alliances[i][j];
                     if (j < alliances[i].size() - 1)
                         cout << " - ";
@@ -496,10 +496,8 @@ int main()
                         cout << endl;
 
                     // Calculate total score for the alliance
-                    for (size_t k = 0; k < team_numbers.size(); ++k)
-                    {
-                        if (team_numbers[k] == alliances[i][j])
-                        {
+                    for (size_t k = 0; k < team_numbers.size(); ++k){
+                        if (team_numbers[k] == alliances[i][j]){
                             total_score += avg_score[k];
                             break;
                         }
@@ -510,9 +508,9 @@ int main()
             }
             break;
         }
+
         default:
-            if (choice != exit_prog)
-            {
+            if (choice != exit_prog){
                 cout << "Please enter a valid choice (1, 2, 3, 4, 5, 6, 7, 8)" << endl;
             }
             break;
@@ -524,32 +522,27 @@ int main()
 }
 
 // Converts 5232 Google Sheet to a Matrix that supports quick data manipulation.
-void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
-{
-    ifstream file(filename);
 
-    if (!file.is_open())
-    {
-        cerr << "Error: Unable to open the file." << filename << '\n';
+void csv_to_matrix(const string &filename1, vector<vector<int>> &score_matrix){
+    ifstream file(filename1);
+
+    if (!file.is_open()){
+        cerr << "Error: Unable to open the file." << filename1 << '\n';
         exit(1);
     }
 
     string line{};
     getline(file, line);
-    while (getline(file, line))
-    {
+    while (getline(file, line)){
         vector<int> row{};
         stringstream ss(line);
         string cell{};
 
-        while (getline(ss, cell, ','))
-        {
-            if (cell.empty())
-            {
+        while (getline(ss, cell, ',')){
+            if (cell.empty()){
                 row.push_back(0);
             }
-            else
-            {
+            else{
                 row.push_back(stoi(cell));
             }
         }
@@ -559,49 +552,51 @@ void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
 
     file.close();
 }
+
 // Checks if file ends with .csv
-bool endsWithCsv(const string& str) {
-    if (str.length() >= 4) {
+
+bool endsWithCsv(const string& str){
+    if (str.length() >= 4){
         return (str.substr(str.length() - 4) == ".csv");
     }
     return false;
 }
 
 // Checks if file has empty rows
-bool hasEmptyRows(const string& filename) {
+bool hasEmptyRows(const string& filename){
     ifstream file(filename);
     string line;
 
-    if (file.is_open()) {
-        while (getline(file, line)) {
+    if (file.is_open()){
+        while (getline(file, line)){
             // Check if the line contains only commas or is empty
-            if (line.find_first_not_of(',') == string::npos || line.empty()) {
+            if (line.find_first_not_of(',') == string::npos || line.empty()){
                 file.close();
                 return true;
             }
         }
         file.close();
-    } else {
+    } else{
         cerr << "Unable to open file: " << filename << endl;
     }
     return false;
 }
 
 // Checks if the first row is a header
-bool isFirstRowNumeric(const string& filename) {
+bool isFirstRowNumeric(const string& filename){
     ifstream file(filename);
     string line;
 
-    if (file.is_open()) {
-        if (getline(file, line)) {
+    if (file.is_open()){
+        if (getline(file, line)){
             stringstream ss(line);
             string cell;
 
             // Check each cell in the first row
-            while (getline(ss, cell, ',')) {
+            while (getline(ss, cell, ',')){
                 // Check if the cell contains only numeric characters
-                for (char c : cell) {
-                    if (!isdigit(c)) {
+                for (char c : cell){
+                    if (!isdigit(c)){
                         file.close();
                         return false;
                     }
@@ -610,41 +605,43 @@ bool isFirstRowNumeric(const string& filename) {
             file.close();
             return true;
         }
-    } else {
+    } else{
         cerr << "Unable to open file: " << filename << endl;
     }
     return false;
 }
 
-void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumericLocations) {
+// Function - find non numeric data
+
+void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumericLocations){
     ifstream file(filename);
     string line;
     int rowNumber = 0;
     bool isFirstRow = true; // Flag to identify the first row
 
-    if (file.is_open()) {
+    if (file.is_open()){
         // Read each line of the file
-        while (getline(file, line)) {
+        while (getline(file, line)){
             stringstream ss(line);
             string cell;
             int colNumber = 0;
             rowNumber++;
 
             // Skip processing the first row if it's all non-numeric
-            if (isFirstRow) {
+            if (isFirstRow){
                 bool allNumeric = true;
-                while (getline(ss, cell, ',')) {
-                    for (char c : cell) {
-                        if (!isdigit(c) && c != '.' && c != '-') {
+                while (getline(ss, cell, ',')){
+                    for (char c : cell){
+                        if (!isdigit(c) && c != '.' && c != '-'){
                             allNumeric = false;
                             break;
                         }
                     }
-                    if (!allNumeric) {
+                    if (!allNumeric){
                         break; // Break if any non-numeric value found in the first row
                     }
                 }
-                if (allNumeric) {
+                if (allNumeric){
                     isFirstRow = false; // Update the flag to indicate we've processed the first row
                     continue; // Skip to the next iteration to ignore the first row
                 }
@@ -652,23 +649,23 @@ void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumer
 
             // Split the line into cells and check each cell for non-numeric data
             stringstream ss2(line); // Reset the stringstream
-            while (getline(ss2, cell, ',')) {
+            while (getline(ss2, cell, ',')){
                 colNumber++;
                 // Check if the cell contains only numeric characters
                 bool numeric = true;
-                for (char c : cell) {
-                    if (!isdigit(c) && c != '.' && c != '-') {
+                for (char c : cell){
+                    if (!isdigit(c) && c != '.' && c != '-'){
                         numeric = false;
                         break;
                     }
                 }
-                if (!numeric) {
+                if (!numeric){
                     nonNumericLocations.push_back(make_pair(rowNumber, colNumber));
                 }
             }
         }
         file.close();
-    } else {
+    } else{
         cerr << "Unable to open file: " << filename << endl;
     }
 }
