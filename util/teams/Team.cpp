@@ -53,7 +53,7 @@ T& Team<T>::GetMetricValue(const MetricType&& metric_type) const {
          return this->team_metric->GetMatchCount(); break;
     case MetricType::NONE:
     default:
-        std::cerr << "Invalid Metric Type was passed to Update Metric" << std::endl;
+        std::cerr << "Invalid Metric Type was passed to Get Metric, got NONE, expected other" << std::endl;
         throw;
         break;
     }
