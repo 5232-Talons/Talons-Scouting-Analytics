@@ -22,23 +22,51 @@ This is to be deprecated
 Keep it in for a few more iterations in case an issue arises with CSVReader.
 */
 void csv_to_matrix(const string &, vector<vector<int>> &);
+bool endsWithCsv(const string& str);
+bool hasEmptyRows(const string& filename);
+bool isFirstRowNumeric(const string& filename);
+void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumericLocations);
 
 int main()      
 {
+    vector<pair<int, int>> nonNumericLocations;
+    int as; //auto speaker
+    int aa; //auto amp
+    int ts; //telop speaker
+    int ta; //telop amp
+    int tt; //telop trap
     char ch_has_header{'n'};
     string filename = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
     string filename2;
     cout << "****************************************" << endl;
     cout << "  Welcome to 5232's Scouting Analytics" << endl;
     cout << "****************************************" << endl;
-
+    cout << "Your first csv should be a matrix of each teams match performance such that column 1 is team number, and the rest of the columns are other data" << endl;
     cout << "Enter main filename to load: ";
     cin >> filename;
     cout << '\n';
+    if(!(endsWithCsv(filename))){
+        cout << endl << "ERROR - your match data is not a .csv" << endl;
+        return 1;
+    }
+    if(hasEmptyRows(filename)){
+        cout << endl << "ERROR - this file has empty rows" << endl;
+        return 1;
+    }
+    if(!(isFirstRowNumeric(filename))){
+        ch_has_header = 'y';
+    }
 
-    cout << "Does this CSV file have a header (y/n): ";
-    cin >> ch_has_header;
-    cout << '\n';
+    findNonNumericData(filename, nonNumericLocations);
+    if (!nonNumericLocations.empty()) {
+        for (const auto& location : nonNumericLocations) {
+            if(location.first != 1){
+            cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
+            }
+        }
+    } else {
+        cout << "The file does not have non-numeric data." << endl;
+    }
 
     auto result = CSVReader(filename).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
 
@@ -49,13 +77,47 @@ int main()
             matrix.push_back(row);
     }
 
-    cout << "Enter other filename to load: ";
+    cout << "What column is auto notes in speaker? (Please count rows from the first row (row 0) foward)" << endl;
+    cin >> as;
+
+    cout << "What column is auto notes in amp? (Please count rows from the first row (row 0) foward)" << endl;
+    cin >> aa;
+    
+    cout << "What column is telop notes in speaker? (Please count rows from the first row (row 0) foward)" << endl;
+    cin >> ts;
+    
+    cout << "What column is telop notes in amp? (Please count rows from the first row (row 0) foward)" << endl;
+    cin >> ta;
+    
+    cout << "What column is telop notes in trap? (Please count rows from the first row (row 0) foward)" << endl;
+    cin >> tt;
+    cout << endl << endl;
+    cout << "Enter your csv of scoutless data. This data must be averaged per team prior to input into this script" << endl;
+    cout << " Also note, this matrix should be a num_teams x data_points such that the columns are teams, climb count, park count, climb count" << endl;
     cin >> filename2;
     cout << '\n';
 
-    cout << "Does this CSV file have a header (y/n): ";
-    cin >> ch_has_header;
-    cout << '\n';
+    findNonNumericData(filename2, nonNumericLocations);
+    if (!nonNumericLocations.empty()) {
+        for (const auto& location : nonNumericLocations) {
+            if(location.first == 1){
+                break;
+            }
+            cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
+        }
+    } 
+
+    if(!(endsWithCsv(filename2))){
+        cout << endl << "ERROR - your scoutless data is not a .csv" << endl;
+        return 1;
+    }
+    if(hasEmptyRows(filename2)){
+        cout << endl << "ERROR - this file has empty rows" << endl;
+        return 1;
+    }
+    if(!(isFirstRowNumeric(filename2))){
+        ch_has_header = 'y';
+    }
 
     auto result2 = CSVReader(filename2).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
 
@@ -67,13 +129,13 @@ int main()
     }
 
     // Team numbers
-    const vector<int> team_numbers = {
-        1714, 1716, 1792, 1806, 2039, 2062, 2129, 2169, 2175, 2227, 2264, 2472, 2491,
-        2501, 2512, 2574, 2846, 2855, 2987, 3023, 3082, 3100, 3130, 3206, 3212, 3297,
-        3418, 3883, 4166, 4182, 4229, 4230, 4623, 4703, 4786, 5232, 5271, 5275, 5339,
-        5720, 5913, 6044, 6045, 6047, 6132, 6147, 6419, 6574, 6758, 7273, 7530, 7619,
-        8122, 8700, 8803
-    };
+// Team numbers
+    vector<int> team_numbers(matrix2.size());
+
+    for(int i = 0; i < matrix2.size(); ++i){
+        team_numbers[i] = matrix2[i][0];
+    }
+
 
     // Initialize vectors
     vector<double> avg_score(team_numbers.size(), 0);
@@ -96,7 +158,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                match_score[j] = matrix[j][1] * 2 + matrix[j][2] * 5 + matrix[j][3] + 2 * matrix[j][4] + matrix[j][5] * 5; 
+                match_score[j] = matrix[j][aa] * 2 + matrix[j][as] * 5 + matrix[j][ta] + 2 * matrix[j][ts] + matrix[j][tt] * 5; 
                 avg_score[i] += match_score[j];
                 notes_avg_score[i] += match_score[j];
                 count++;
@@ -192,7 +254,7 @@ int main()
         {
             if (matrix[j][0] == team_number)
             {
-                NPM[i] += static_cast<double>(matrix[j][1] + matrix[j][2] + matrix[j][3] + matrix[j][4] + matrix[j][5]);
+                NPM[i] += static_cast<double>(matrix[j][aa] + matrix[j][as] + matrix[j][ta] + matrix[j][ts] + matrix[j][tt]);
                 count++;
             }
         }
@@ -496,4 +558,117 @@ void csv_to_matrix(const string &filename, vector<vector<int>> &score_matrix)
     }
 
     file.close();
+}
+// Checks if file ends with .csv
+bool endsWithCsv(const string& str) {
+    if (str.length() >= 4) {
+        return (str.substr(str.length() - 4) == ".csv");
+    }
+    return false;
+}
+
+// Checks if file has empty rows
+bool hasEmptyRows(const string& filename) {
+    ifstream file(filename);
+    string line;
+
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            // Check if the line contains only commas or is empty
+            if (line.find_first_not_of(',') == string::npos || line.empty()) {
+                file.close();
+                return true;
+            }
+        }
+        file.close();
+    } else {
+        cerr << "Unable to open file: " << filename << endl;
+    }
+    return false;
+}
+
+// Checks if the first row is a header
+bool isFirstRowNumeric(const string& filename) {
+    ifstream file(filename);
+    string line;
+
+    if (file.is_open()) {
+        if (getline(file, line)) {
+            stringstream ss(line);
+            string cell;
+
+            // Check each cell in the first row
+            while (getline(ss, cell, ',')) {
+                // Check if the cell contains only numeric characters
+                for (char c : cell) {
+                    if (!isdigit(c)) {
+                        file.close();
+                        return false;
+                    }
+                }
+            }
+            file.close();
+            return true;
+        }
+    } else {
+        cerr << "Unable to open file: " << filename << endl;
+    }
+    return false;
+}
+
+void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumericLocations) {
+    ifstream file(filename);
+    string line;
+    int rowNumber = 0;
+    bool isFirstRow = true; // Flag to identify the first row
+
+    if (file.is_open()) {
+        // Read each line of the file
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string cell;
+            int colNumber = 0;
+            rowNumber++;
+
+            // Skip processing the first row if it's all non-numeric
+            if (isFirstRow) {
+                bool allNumeric = true;
+                while (getline(ss, cell, ',')) {
+                    for (char c : cell) {
+                        if (!isdigit(c) && c != '.' && c != '-') {
+                            allNumeric = false;
+                            break;
+                        }
+                    }
+                    if (!allNumeric) {
+                        break; // Break if any non-numeric value found in the first row
+                    }
+                }
+                if (allNumeric) {
+                    isFirstRow = false; // Update the flag to indicate we've processed the first row
+                    continue; // Skip to the next iteration to ignore the first row
+                }
+            }
+
+            // Split the line into cells and check each cell for non-numeric data
+            stringstream ss2(line); // Reset the stringstream
+            while (getline(ss2, cell, ',')) {
+                colNumber++;
+                // Check if the cell contains only numeric characters
+                bool numeric = true;
+                for (char c : cell) {
+                    if (!isdigit(c) && c != '.' && c != '-') {
+                        numeric = false;
+                        break;
+                    }
+                }
+                if (!numeric) {
+                    nonNumericLocations.push_back(make_pair(rowNumber, colNumber));
+                }
+            }
+        }
+        file.close();
+    } else {
+        cerr << "Unable to open file: " << filename << endl;
+    }
 }
