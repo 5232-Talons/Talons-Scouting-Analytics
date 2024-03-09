@@ -160,6 +160,7 @@ int main(){
                 avg_score[i] += match_score[j];
                 notes_avg_score[i] += match_score[j];
                 count++;
+                NPM[i] += matrix1[j][aa] + matrix1[j][as] + matrix1[j][ta] + matrix1[j][ts] + matrix1[j][tt]; 
             }
         }
         for(size_t z = 0; z < matrix2.size(); z++ ){
@@ -171,6 +172,7 @@ int main(){
             avg_score[i] /= count;
             notes_avg_score[i] /= count;
             match_count[i] = count;
+            NPM[i] /= count;
         }
     }
 
