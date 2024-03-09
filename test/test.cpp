@@ -4,16 +4,19 @@
 #include <string>
 #include <vector>
 #include "..\util\csv.hpp"
+#include "..\util\teams\Team.hpp"
 
 using namespace std;
 
 int main()
 {
-    string filename = "data.csv";
+    Team<double> team;
+    team.UpdateMetric();
+    string filename = "../Data/NLR/nlr1.csv";
 
     auto c = CSVReader(filename).ParseCSV().GetResults(); // ParseCVS files and return the map.
 
-    CSVWriter writer = CSVWriter().SetFileName("data2.csv"); // Init a csv writer to file name "data2.csv -- defaults to tmp.csv"
+    CSVWriter writer = CSVWriter().SetFileName("m1.csv"); // Init a csv writer to file name "data2.csv -- defaults to tmp.csv"
 
     for (const auto &[key, value] : c)
     {
