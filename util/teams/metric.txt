@@ -1,0 +1,14 @@
+    vector<double> avg_score(team_numbers.size(), 0);
+    vector<double> notes_avg_score(team_numbers.size(), 0);
+    vector<double> match_score(matrix.size(), 0);
+    vector<double> stdev(team_numbers.size(), 0);
+    vector<double> driver_score(team_numbers.size(), 0);
+    vector<double> climbing_score(team_numbers.size(), 0);
+    vector<double> human_score(team_numbers.size(), 0);
+    vector<double> match_count(team_numbers.size(), 0);
+    vector<double> NPM(team_numbers.size(), 0);
+
+
+    matrix 1
+    matrix 2
+    
