@@ -113,9 +113,7 @@ int main(){
         cout << endl << "ERROR - this file has empty rows" << endl;
         return 1;
     }
-    if(!(isFirstRowNumeric(filename2))){
-        header = true;
-    }
+
     findNonNumericData(filename2, nonNumericLocations);
     if (!nonNumericLocations.empty()){
         for (const auto& location : nonNumericLocations){
@@ -123,7 +121,6 @@ int main(){
             cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
             }
         }
-        return 1;
     } 
 
 
