@@ -194,7 +194,7 @@ int main(){
 #pragma endregion
 
     int choice{};
-    const int exit_prog = 9;
+    const int exit_prog = 8;
 //**** MAIN MENU ****
     while (choice != exit_prog){
         int team{}, blue1{}, blue2{}, blue3{}, red1{}, red2{}, red3{}, bluetot{}, redtot{}, blue1_score{}, blue2_score{}, blue3_score{}, red1_score{}, red2_score{}, red3_score{};
@@ -204,12 +204,11 @@ int main(){
         cout << "1. View a team's data" << endl;
         cout << "2. Print a CSV of all team's data" << endl;
         cout << "3. Simulate a match" << endl;
-        cout << "4. Load New CSV Datasets" << endl;
-        cout << "5. Save Data to CSV" << endl;
-        cout << "6. Print list of teams" << endl;
-        cout << "7. Print list of teams based off of best score avg" << endl;
-        cout << "8. Playoffs simulation " << endl;
-        cout << "9. Exit program" << endl;
+        cout << "4. Save Data to CSV" << endl;
+        cout << "5. Print list of teams" << endl;
+        cout << "6. Print list of teams based off of best score avg" << endl;
+        cout << "7. Playoffs simulation " << endl;
+        cout << "8. Exit program" << endl;
         cin >> choice;
 
         switch (choice){
@@ -290,46 +289,8 @@ int main(){
                  << "End of Match Simulation" << endl
                  << endl;
             break;
+   
         case 4:
-        {
-            char ch_has_header{'n'};
-            string filename1 = "robot_scores.csv"; // Provide the path to your CSV file -- This will serve as a default name as well.
-
-            cout << "Enter filename to load: ";
-            cin >> filename1;
-            cout << '\n';
-
-            cout << "Does this CSV file have a header (y/n): ";
-            cin >> ch_has_header;
-            cout << '\n';
-
-            auto result1 = CSVReader(filename1).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
-
-            vector<vector<int>> matrix1{};
-            for (const auto &[key, value] : result1){
-                for (const auto &row : value)
-                    matrix1.push_back(row);
-            }
-
-            cout << "Enter other filename to load: ";
-            cin >> filename2;
-            cout << '\n';
-
-            cout << "Does this CSV file have a header (y/n): ";
-            cin >> ch_has_header;
-            cout << '\n';
-
-            auto result2 = CSVReader(filename2).ParseCSV((ch_has_header == 'y' ? true : false)).GetResults();
-
-            vector<vector<int>> matrix2{};
-            for (const auto &[key, value] : result2){
-                for (const auto &row : value)
-                    matrix2.push_back(row);
-            }
-
-            break;
-        }
-        case 5:
         {
             vector<vector<double>> rows{};
             vector<double> row{};
@@ -354,7 +315,7 @@ int main(){
 
             break;
         }
-        case 6:
+        case 5:
         {
             for (size_t y = 0; y < avg_score.size(); ++y)
             {
@@ -362,7 +323,7 @@ int main(){
             }
             break;
         }
-        case 7:
+        case 6:
         {
             vector<tuple<int, double, double>> teams_info;
 
@@ -380,7 +341,7 @@ int main(){
 
             break;
         }
-        case 8: 
+        case 7: 
         {
             // Sort teams based on average score
             vector<pair<int, double>> sorted_teams;
