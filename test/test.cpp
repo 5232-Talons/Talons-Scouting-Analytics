@@ -5,14 +5,18 @@
 #include <vector>
 #include "..\util\csv.hpp"
 #include "..\util\teams\Team.hpp"
+#include "..\util\math\Metrics.hpp"
 
 using namespace std;
 
 int main()
 {
     Team<double> team;
-    team.UpdateMetric();
+    MetricType::AVERAGE_NOTE_SCORE;
+    team.UpdateMetric(MetricType::AVERAGE_SCORE, 10.0);
     string filename = "../Data/NLR/nlr1.csv";
+    cout << team.GetMetricValue(MetricType::AVERAGE_SCORE) << endl;
+    cout << team.GetMetricValue(MetricType::CLIMB_SCORE) << endl;
 
     auto c = CSVReader(filename).ParseCSV().GetResults(); // ParseCVS files and return the map.
 

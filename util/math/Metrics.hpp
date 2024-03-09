@@ -45,18 +45,17 @@ struct Metrics{
         void SetAvgClimbScore(const T&);
         void SetMatchCount(const T&);
 
-        T& GetAvgScore()        const;
-        T& GetAvgNoteScore()    const;
-        T& GetAvgNotePerMatch() const;
-        T& GetStdDev()          const;
-        T& GetDriverScore()     const;
-        T& GetHumanPlayerScore()const;
-        T& GetAvgClimbScore()   const;
-        T& GetMatchCount()      const;
+        T& GetAvgScore();
+        T& GetAvgNoteScore();
+        T& GetAvgNotePerMatch();
+        T& GetStdDev();
+        T& GetDriverScore();
+        T& GetHumanPlayerScore();
+        T& GetAvgClimbScore();
+        T& GetMatchCount();
 
         ~Metrics(){};
 };
 
-extern MetricType Type;
 #include "Metrics.cpp"
 #endif

@@ -19,7 +19,10 @@ struct Team {
     public:
         Team();
 
-        void UpdateMetric();
+        void UpdateMetric(MetricType&&, const T&);
+
+        T& GetMetricValue(const MetricType&&) const;
+
         ~Team(){};
 };
 

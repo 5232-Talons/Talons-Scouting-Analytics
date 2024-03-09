@@ -24,39 +24,37 @@ Metrics<T>::Metrics(const T& aScr_, const T& aNtScr_, const T& nPM_, const T& st
 };
 
 template <class T>
-Metrics<T>::Metrics(){
+Metrics<T>::Metrics(){};
 
-};
-
-#pragma region Sets
+#pragma region Mutators
 template <class T>
 void Metrics<T>::SetAvgScore(const T& avg_score){
     this->avg_scr = avg_score;
-    return *this;
+}
+
+template <class T>
+void Metrics<T>::SetAvgNoteScore(const T& avg_n_score){
+    this->avg_note_scr = avg_n_score;
 }
 
 template <class T>
 void Metrics<T>::SetAvgNotePerMatch(const T& npm){
     this->note_p_match = npm;
-    return *this;
 }
 
 template <class T>
 void Metrics<T>::SetStdDev(const T& std_dev){
     this->std_dev = std_dev;
-    return *this;
 }
 
 template <class T>
 void Metrics<T>::SetDriverScore(const T& driver_score){
     this->driver_scr = driver_score;
-    return *this;
 }
 
 template <class T>
 void Metrics<T>::SetHumanPlayerScore(const T& human_score){
     this->human_scr = human_score;
-    return *this;
 }
 
 template <class T>
@@ -67,43 +65,47 @@ void Metrics<T>::SetAvgClimbScore(const T& climb_score){
 template <class T>
 void Metrics<T>::SetMatchCount(const T& match_count){
     this->match_cnt = match_count;
-    return *this;
 }
 #pragma endregion
 
-#pragma region Gets
+#pragma region Accessors
 template <class T>
-T& Metrics<T>::GetAvgScore() const{
-    return this->avg_scrore;
+T& Metrics<T>::GetAvgScore() {
+    return this->avg_scr;
 }
 
 template <class T>
-T& Metrics<T>::GetAvgNoteScore() const {
+T& Metrics<T>::GetAvgNoteScore() {
     return this->avg_note_scr;
 }
 
 template <class T>
-T& Metrics<T>::GetAvgNotePerMatch() const {
+T& Metrics<T>::GetAvgNotePerMatch()  {
+    return this->avg_note_scr;
+}
+
+template <class T>
+T& Metrics<T>::GetStdDev(){
     return this->std_dev;
 }
 
 template <class T>
-T& Metrics<T>::GetDriverScore() const {
+T& Metrics<T>::GetDriverScore()  {
     return this->driver_scr;
 }
 
 template <class T>
-T& Metrics<T>::GetHumanPlayerScore() const {
+T& Metrics<T>::GetHumanPlayerScore() {
     return this->human_scr;
 }
 
 template <class T>
-T& Metrics<T>::GetAvgClimbScore() const {
+T& Metrics<T>::GetAvgClimbScore()  {
     return this->climbing_scr;
 }
 
 template <class T>
-T& Metrics<T>::GetMatchCount() const {
+T& Metrics<T>::GetMatchCount()  {
     return this->match_cnt;
 }
 #pragma endregion
