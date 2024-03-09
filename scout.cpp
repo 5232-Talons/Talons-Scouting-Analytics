@@ -22,10 +22,10 @@ This is to be deprecated
 Keep it in for a few more iterations in case an issue arises with CSVReader.
 */
 void csv_to_matrix(const string &, vector<vector<int>> &);
-bool endsWithCsv(const string& str);
-bool hasEmptyRows(const string& filename);
-bool isFirstRowNumeric(const string& filename);
-void findNonNumericData(const string& filename, vector<pair<int, int>>& nonNumericLocations);
+bool endsWithCsv(const string& );
+bool hasEmptyRows(const string& );
+bool isFirstRowNumeric(const string& );
+void findNonNumericData(const string& , vector<pair<int, int>>& );
 
 int main()      
 {
