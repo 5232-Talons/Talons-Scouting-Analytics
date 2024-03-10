@@ -1,7 +1,3 @@
-Sure, here's how you can format the instructions for a GitHub README:
-
----
-
 # Talons Scouting Analytics
 
 ## Introduction
@@ -19,7 +15,7 @@ Talons Scouting Analytics is a software tool designed to analyze scouting data f
 
 You can obtain the software in the following ways:
 
-- Download the software files from the [GitHub repository](https://github.com/your_repository).
+- Download the software files from the [GitHub repository](https://github.com/5232-Talons/Talons-Scouting-Analytics).
 - Request a zip file from a developer.
 - Download the executable file from the Discord server.
 
