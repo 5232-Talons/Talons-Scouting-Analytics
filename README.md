@@ -39,12 +39,12 @@ Use the following equation to import the scoutless data into the Google Sheet:
 Configure the scoutless sheet with the event code. Ensure that the scoutless data (matrix 2) is in the following format. There should be only as many rows as there are teams.:
 
 ```
-Team Climb, Park, Leave
+Team, Climb, Park, Leave
 ```
 
 ### Download Scouting Data
 
-Access both Matrix tabs of 5232's Scouting Google Sheet.
+Access both Matrix tabs of 5232's Scouting Google Sheet. Alternativley, make your own version of matrix 1 and 2.
 
 ### Place CSV Files
 
