@@ -7,11 +7,11 @@ g++ (optional)
 Download the Software:
 Obtain the software files from the GitHub repository, request a zip file from a developer, or download the executable file from the Discord server.
 
-Matrix 1:
-Column 1 represents the team number.
-The remaining columns contain scoring elements.
-The dataset must not have empty rows, non-integers, or strings anywhere besides row 1.
-Matches do not need to be in order, and teams do not need to be assigned a alliance station.
+    Matrix 1:
+    Column 1 represents the team number.
+    The remaining columns contain scoring elements.
+    The dataset must not have empty rows, non-integers, or strings anywhere besides row 1.
+    Matches do not need to be in order, and teams do not need to be assigned a alliance station.
 --------------------------------------------------------------------------------------
 Matrix 2:
 Use the following equation to import the scoutless data into the Google Sheet:
