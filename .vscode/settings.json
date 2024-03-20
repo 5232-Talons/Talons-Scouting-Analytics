@@ -59,6 +59,9 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "deque": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "algorithm": "cpp",
+        "iomanip": "cpp",
+        "optional": "cpp"
     }
 }

@@ -58,3 +58,13 @@ T& Team<T>::GetMetricValue(const MetricType&& metric_type) const {
         break;
     }
 }
+
+template <class T>
+void Team<T>::AddScoutedData(const std::vector<T>& scouted_data){
+    this->scouted_data.push_back(scouted_data);
+}
+
+template <class T>
+void Team<T>::AddScoutlessData(const std::vector<T>& scoutless_data){
+    this->scoutless_data.push_back(scoutless_data);
+}
