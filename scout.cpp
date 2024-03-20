@@ -27,7 +27,7 @@ void findNonNumericData(const string&, vector<pair<int, int>>&);
 int main(){
 #pragma region // Analytic Setup & computations
     vector<pair<int, int>> nonNumericLocations;
-    int as{}, aa{}, ts{}, ta{}, tt{};
+    int as{}, aa{}, ts{}, ta{}, tt{}, p{}, l{}, c{};
     char ch_has_header{'n'};
     bool header = false;
 
@@ -37,7 +37,6 @@ int main(){
     cout << "****************************************" << endl;
     cout << "  Welcome to 5232's Scouting Analytics" << endl;
     cout << "****************************************" << endl;
-    cout << "Your first csv should be a matrix of each teams match performance such that column 1 is team number, and the rest of the columns are other data" << endl;
     cout << "Enter main filename to load: ";
     cin >> filename1;
     cout << '\n';
@@ -95,50 +94,30 @@ int main(){
         cin >> tt;
         tt--;
 
+        cout << "What column is leave in auto(mobility)?" << endl;
+        cin >> l;
+        l--;
+
+        cout << "What column is park?" << endl;
+        cin >> p;
+        p--;
+
+        cout << "What column is climb?" << endl;
+        cin >> c;
+        c--;
+
+
         cout << endl << endl;
-//**** Input Scoutless Data ****
-
-    cout << "Enter your csv of scoutless data. This data must be averaged per team prior to input into this script" << endl;
-    cout << " Also note, this matrix should be a num_teams x data_points such that the columns are teams, climb count, park count, climb count" << endl;
-    cin >> filename2;
-    cout << '\n';
-
-//**** Bad Data Parsing ****
-
-    if(!(endsWithCsv(filename2))){
-        cout << endl << "ERROR - your scoutless data is not a .csv" << endl;
-        return 1;
-    }
-    if(hasEmptyRows(filename2)){
-        cout << endl << "ERROR - this file has empty rows" << endl;
-        return 1;
-    }
-
-    findNonNumericData(filename2, nonNumericLocations);
-    if (!nonNumericLocations.empty()){
-        for (const auto& location : nonNumericLocations){
-            if(location.first != 1){
-            cout << " NOT NUMERIC @ Row: " << location.first << ", Column: " << location.second << endl;
-            }
-        }
-    } 
 
 
-    auto result2 = CSVReader(filename2).ParseCSV(isFirstRowNumeric(filename2) ? false : true).GetResults();
-
-// Populate matrix 2
-    vector<vector<int>> matrix2{};
-    for (const auto &[key, value] : result2){
-        for (const auto &row : value)
-            matrix2.push_back(row);   
-    }
-    
 // Populate vector team numbers
-    vector<int> team_numbers(matrix2.size());
+    vector<int> team_numbers = {
+        159, 568, 662, 1011, 1108, 1138, 1303, 1339, 1410, 1619, 1799, 1822, 1868,
+        1977, 2036, 2083, 2240, 2259, 2261, 2945, 2996, 3006, 3200, 3374, 3648, 3729,
+        3807, 4009, 4010, 4068, 4293, 4388, 4418, 4499, 4550, 4593, 4944, 5232, 5493,
+        5690, 7243, 7479, 7485, 7737, 8334, 9068, 9112, 9552, 9586
+    };
 
-    for(size_t i = 0; i < matrix2.size(); ++i){
-        team_numbers[i] = matrix2[i][0];
-    }
 
 // Initialize vectors
     vector<double> avg_score(team_numbers.size(), 0);
@@ -156,18 +135,14 @@ int main(){
 
         for (size_t j = 0; j < matrix1.size(); ++j){
             if (matrix1[j][0] == team_number){
-                match_score[j] = matrix1[j][aa] * 2 + matrix1[j][as] * 5 + matrix1[j][ta] + 2 * matrix1[j][ts] + matrix1[j][tt] * 5; 
+                match_score[j] = matrix1[j][aa] * 2 + matrix1[j][as] * 5 + matrix1[j][ta] + 2 * matrix1[j][ts] + matrix1[j][tt] * 5 + matrix1[j][l] * 2 + matrix1[j][p] + matrix1[j][c] * 3; 
                 avg_score[i] += match_score[j];
                 notes_avg_score[i] += match_score[j];
                 count++;
                 NPM[i] += matrix1[j][aa] + matrix1[j][as] + matrix1[j][ta] + matrix1[j][ts] + matrix1[j][tt]; 
             }
         }
-        for(size_t z = 0; z < matrix2.size(); z++ ){
-            if(matrix2[z][0] == team_number){
-                avg_score[i] += matrix2[z][1] * 3 + matrix2[z][2] + matrix2[z][3]* 2;
-            }
-        }
+
         if (count != 0){
             avg_score[i] /= count;
             notes_avg_score[i] /= count;
@@ -217,7 +192,7 @@ int main(){
             cout << "Please Enter the team's data you want: ";
             cin >> team;
             cout << endl;
-            for (size_t y = 0; y < avg_score.size(); ++y){
+            for (size_t y = 0; y < team_numbers.size(); ++y){
 
                 if (team_numbers[y] == team)
                 {
@@ -304,6 +279,7 @@ int main(){
                 row.push_back(notes_avg_score[y]);
                 row.push_back(stdev[y]);
                 row.push_back(NPM[y]);
+                row.push_back(match_count[y]);
                 row.push_back(match_count[y]);
                 rows.push_back(row);
             }
