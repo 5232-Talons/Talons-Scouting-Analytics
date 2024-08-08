@@ -1,23 +1,35 @@
-name: C/C++ CI
+# .github/workflows/compile-scout-latest-gcc.yml
+
+name: Compile and Run Scout with Latest GCC
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install Latest GCC
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt-get update
+        sudo apt-get install -y gcc-13 g++-13
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 50
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 50
+
+    - name: Verify GCC Version
+      run: gcc --version
+
+    - name: Compile scout.cpp
+      run: |
+        g++ -o scout scout.cpp
+        ./scout
